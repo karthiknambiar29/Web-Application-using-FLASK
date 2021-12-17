@@ -1,0 +1,45 @@
+.form-signin {
+  width: 100%;
+  max-width: 500px;
+  padding: 15px;
+  margin: 0 auto;
+  border: black;
+  border-width: 5px;
+  border-style: outset;
+  border-radius: 15px;
+}
+
+.option {
+  width: 400px;
+  max-width: 500px;
+  padding: 15px;
+  margin: 0 auto;
+  align-content: center;
+}
+
+.card-front {
+  width: 75%;
+  max-width: 1000px;
+  padding: 15px;
+  margin: 0 auto;
+  border: black;
+  border-width: 5px;
+  border-style: outset;
+  border-radius: 15px;
+}
+.o {
+  width: 400px;
+  border:transparent;
+  border-width: 5px;
+  border-style: outset;
+  border-radius: 15px;
+}
+
+.table {
+  width: 75%;
+  padding: 15px;
+  margin: 0 auto;
+}
+.table-responsive {
+  max-height:300px;
+}
