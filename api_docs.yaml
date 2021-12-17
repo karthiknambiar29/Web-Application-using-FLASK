@@ -1,0 +1,636 @@
+openapi: 3.0.0
+info:
+  title: Flashcard Open API Documentation
+  version: 1.0.0
+  description: |
+    <h2>ER Diagram</h2>
+    [![](https://mermaid.ink/img/eyJjb2RlIjoiZXJEaWFncmFtXG4gICAgdXNlcnMge1xuICAgICAgICBpbnRlZ2VyIHVzZXJfaWRcbiAgICAgICAgc3RyaW5nIG5hbWVcbiAgICAgICAgc3RyaW5nIHBhc3N3b3JkXG4gICAgfVxuICAgIGNhcmRzIH18LS18fCBjYXRlZ29yeSA6IFwiXCJcbiAgICBjYXJkcyB7XG4gICAgICAgIGludGVnZXIgY2FyZF9pZFxuICAgICAgICBzdHJpbmcgZnJvbnRcbiAgICAgICAgaW50ZWdlciBhbnN3ZXJcbiAgICAgICAgaW50ZWdlciBjYXRlZ29yeV9pZFxuICAgICAgICBzdHJpbmcgb3B0aW9uXzFcbiAgICAgICAgc3RyaW5nIG9wdGlvbl8yXG4gICAgICAgIHN0cmluZyBvcHRpb25fM1xuICAgICAgICBzdHJpbmcgb3B0aW9uXzRcbiAgICB9XG4gICAgY2F0ZWdvcnkge1xuICAgICAgICBpbnRlZ2VyIGNhdGVnb3J5X2lkXG4gICAgICAgIHN0cmluZyBuYW1lXG4gICAgICAgIHN0cmluZyBkZXNjcmlwdGlvblxuICAgIH1cbiAgICBzY29yZXMgfXwtLXx8IGNhdGVnb3J5IDogXCJcIlxuICAgIHNjb3JlcyB9fC0tfHwgdXNlcnMgOiBcIlwiXG4gICAgc2NvcmVzIHtcbiAgICAgICAgaW50ZWdlciBzY29yZV9pZFxuICAgICAgICBpbnRlZ2VyIHVzZXJfaWRcbiAgICAgICAgaW50ZWdlciBzY29yZVxuICAgICAgICBkYXRlRm9ybWF0IGRhdGV0aW1lXG4gICAgICAgIGludGVnZXIgY2F0ZWdvcnlfaWRcbiAgICAgICAgaW50ZWdlciBxMVxuICAgICAgICBpbnRlZ2VyIHEyXG4gICAgICAgIGludGVnZXIgcTNcbiAgICAgICAgaW50ZWdlciBxNFxuICAgICAgICBpbnRlZ2VyIHE1XG4gICAgICAgIGludGVnZXIgcTZcbiAgICAgICAgaW50ZWdlciBxN1xuICAgICAgICBpbnRlZ2VyIHE4XG4gICAgICAgIGludGVnZXIgcTlcbiAgICAgICAgaW50ZWdlciBxMTBcbiAgICB9XG5cbiAgICAiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlLCJhdXRvU3luYyI6dHJ1ZSwidXBkYXRlRGlhZ3JhbSI6ZmFsc2V9)](https://mermaid.live/edit#eyJjb2RlIjoiZXJEaWFncmFtXG4gICAgdXNlcnMge1xuICAgICAgICBpbnRlZ2VyIHVzZXJfaWRcbiAgICAgICAgc3RyaW5nIG5hbWVcbiAgICAgICAgc3RyaW5nIHBhc3N3b3JkXG4gICAgfVxuICAgIGNhcmRzIH18LS18fCBjYXRlZ29yeSA6IFwiXCJcbiAgICBjYXJkcyB7XG4gICAgICAgIGludGVnZXIgY2FyZF9pZFxuICAgICAgICBzdHJpbmcgZnJvbnRcbiAgICAgICAgaW50ZWdlciBhbnN3ZXJcbiAgICAgICAgaW50ZWdlciBjYXRlZ29yeV9pZFxuICAgICAgICBzdHJpbmcgb3B0aW9uXzFcbiAgICAgICAgc3RyaW5nIG9wdGlvbl8yXG4gICAgICAgIHN0cmluZyBvcHRpb25fM1xuICAgICAgICBzdHJpbmcgb3B0aW9uXzRcbiAgICB9XG4gICAgY2F0ZWdvcnkge1xuICAgICAgICBpbnRlZ2VyIGNhdGVnb3J5X2lkXG4gICAgICAgIHN0cmluZyBuYW1lXG4gICAgICAgIHN0cmluZyBkZXNjcmlwdGlvblxuICAgIH1cbiAgICBzY29yZXMgfXwtLXx8IGNhdGVnb3J5IDogXCJcIlxuICAgIHNjb3JlcyB9fC0tfHwgdXNlcnMgOiBcIlwiXG4gICAgc2NvcmVzIHtcbiAgICAgICAgaW50ZWdlciBzY29yZV9pZFxuICAgICAgICBpbnRlZ2VyIHVzZXJfaWRcbiAgICAgICAgaW50ZWdlciBzY29yZVxuICAgICAgICBkYXRlRm9ybWF0IGRhdGV0aW1lXG4gICAgICAgIGludGVnZXIgY2F0ZWdvcnlfaWRcbiAgICAgICAgaW50ZWdlciBxMVxuICAgICAgICBpbnRlZ2VyIHEyXG4gICAgICAgIGludGVnZXIgcTNcbiAgICAgICAgaW50ZWdlciBxNFxuICAgICAgICBpbnRlZ2VyIHE1XG4gICAgICAgIGludGVnZXIgcTZcbiAgICAgICAgaW50ZWdlciBxN1xuICAgICAgICBpbnRlZ2VyIHE4XG4gICAgICAgIGludGVnZXIgcTlcbiAgICAgICAgaW50ZWdlciBxMTBcbiAgICB9XG5cbiAgICAiLCJtZXJtYWlkIjoie1xuICBcInRoZW1lXCI6IFwiZGVmYXVsdFwiXG59IiwidXBkYXRlRWRpdG9yIjpmYWxzZSwiYXV0b1N5bmMiOnRydWUsInVwZGF0ZURpYWdyYW0iOmZhbHNlfQ)"
+    <h2> Error Codes </h2>  <table>
+      <thead>
+        <th>Resource</th>
+        <th>Error Code</th>
+        <th>Message</th>
+      </thead>
+      <tbody>
+      <tr>
+        <td>User</td>
+        <td>U1001</td>
+        <td>username is required</td>
+      </tr>
+      <tr>
+        <td>User</td>
+        <td>U1002</td>
+        <td>password is required</td>
+      </tr>
+      <tr>
+        <td>User</td>
+        <td>U1003</td>
+        <td>Duplicate User</td>
+      </tr>
+      <tr>
+        <td>Card</td>
+        <td>C1001</td>
+        <td>Invalid Category Id</td>
+      </tr>
+      <tr>
+        <td>Card</td>
+        <td>C1002</td>
+        <td>Invalid Card Details</td>
+      </tr>
+      <tr>
+        <td>Card</td>
+        <td>C1003</td>
+        <td>Answer Invalid</td>
+      </tr>
+      <tr>
+        <td>Card</td>
+        <td>C1004</td>
+        <td>Answer not between 1 and 4</td>
+      </tr>
+      <tr>
+        <td>Card</td>
+        <td>C1005</td>
+        <td>card_id not valid</td>
+      </tr>
+      <tr>
+        <td>Deck</td>
+        <td>D1001</td>
+        <td>Invalid Input</td>
+      </tr>
+      <tr>
+        <td>Deck</td>
+        <td>D1002</td>
+        <td>category_id not valid</td>
+      </tr>
+      </tbody>
+    </table>
+servers:
+  - url: http://0.0.0.0:8080/
+paths:
+  /api/user/{username}:
+    description: >-
+      End point to read, update a user resource with username.
+    get:
+      description: Operation to get a user details
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+            example: karthik
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                title: user object
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: karthik
+                  password:
+                    type: string
+                    example: karthik123
+        '400':
+          description: Bad request.
+        '404':
+          description: Resource not found.
+        '500':
+          description: Internal Server Error.
+    put:
+      description: Operation to update the user password
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+            example: karthik
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: nambiar123
+      responses:
+        '200':
+          description: Successfuly updated.
+          content:
+            application/json:
+              schema:
+                title: user object
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: karthik
+                  password:
+                    type: string
+                    example: nambiar123
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        '404':
+          description: Resource you requested to update not found
+        '500':
+          description: Internal Server Error
+  /api/user:
+    description: End point to create and delete a user.
+    delete:
+      description: Operation to delete the user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: user object
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: karthik
+                password:
+                  type: string
+                  example: karthik123
+      responses:
+        '200':
+          description: Successfully Deleted.
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        '404':
+          description: User does not exist.
+        '500':
+          description: Intenal Server Error.
+    post:
+      description: Operation to create a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: user object
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: ali
+                password:
+                  type: string
+                  example: ali23
+      responses:
+        '201':
+          description: Successfully Created.
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+        '500':
+          description: Internal Server Error.
+  /api/card/{card_id}:
+    description: >-
+      End point to read, update a card resource with card_id.
+    get:
+      description: Operation to get card details
+      parameters:
+        - in: path
+          name: card_id
+          required: true
+          schema:
+            type: integer
+            example: 4
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                title: user object
+                type: object
+                properties:
+                  card_id:
+                    type: integer
+                    example: 4
+                  category_id:
+                    type: integer
+                    example: 1
+                  front:
+                    type: string
+                    example: Water
+                  answer:
+                    type: integer
+                    example: 1
+                  option_1:
+                    type: string
+                    example: पानी
+                  option_2:
+                    type: string
+                    example: आग
+                  option_3:
+                    type: string
+                    example: पौधा
+                  option_4:
+                    type: string
+                    example: धरती
+                   
+        '400':
+          description: Bad request.
+        '404':
+          description: Resource not found.
+        '500':
+          description: Internal Server Error.
+    put:
+        description: Operation to update the card
+        parameters:
+          - in: path
+            name: card_id
+            required: true
+            schema:
+              type: integer
+              example: 4
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  category_id:
+                    type: integer
+                    example: 1
+                  front:
+                    type: string
+                    example: Water
+                  answer:
+                    type: integer
+                    example: 1
+                  option_1:
+                    type: string
+                    example: पानी
+                  option_2:
+                    type: string
+                    example: पौधा
+                  option_3:
+                    type: string
+                    example: आग
+                  option_4:
+                    type: string
+                    example: धरती
+        responses:
+          '200':
+            description: Successfuly updated.
+            content:
+              application/json:
+                schema:
+                  title: user object
+                  type: object
+                  properties:
+                    card_id:
+                      type: integer
+                      example: 4
+                    category_id:
+                      type: integer
+                      example: 1
+                    front:
+                      type: string
+                      example: Water
+                    answer:
+                      type: integer
+                      example: 1
+                    option_1:
+                      type: string
+                      example: पानी
+                    option_2:
+                      type: string
+                      example: पौधा
+                    option_3:
+                      type: string
+                      example: आग
+                    option_4:
+                      type: string
+                      example: धरती
+          '400':
+            description: Bad request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error_code:
+                      type: string
+                    error_message:
+                      type: string
+          '404':
+            description: Resource you requested to update not found
+          '500':
+            description: Internal Server Error
+  /api/card:
+    post:
+        description: Operation to create a card
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  category_id:
+                    type: integer
+                    example: 1
+                  front:
+                    type: string
+                    example: Water
+                  answer:
+                    type: integer
+                    example: 1
+                  option_1:
+                    type: string
+                    example: पानी
+                  option_2:
+                    type: string
+                    example: पौधा
+                  option_3:
+                    type: string
+                    example: आग
+                  option_4:
+                    type: string
+                    example: धरती
+        responses:
+          '200':
+            description: Successfuly updated.
+            content:
+              application/json:
+                schema:
+                  title: user object
+                  type: object
+                  properties:
+                    card_id:
+                      type: integer
+                      example: 23
+                    category_id:
+                      type: integer
+                      example: 1
+                    front:
+                      type: string
+                      example: Water
+                    answer:
+                      type: integer
+                      example: 1
+                    option_1:
+                      type: string
+                      example: पानी
+                    option_2:
+                      type: string
+                      example: पौधा
+                    option_3:
+                      type: string
+                      example: आग
+                    option_4:
+                      type: string
+                      example: धरती
+          '400':
+            description: Bad request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error_code:
+                      type: string
+                    error_message:
+                      type: string
+          '404':
+            description: Resource you requested to update not found
+          '500':
+            description: Internal Server Error
+    delete:
+        description: Operation to delete the card.
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  card_id:
+                    type: integer
+                    example: 4
+        responses:
+          '200':
+            description: Successfully Deleted.
+          '400':
+            description: Bad request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error_code:
+                      type: string
+                    error_message:
+                      type: string
+          '404':
+            description: Card does not exist.
+          '500':
+            description: Intenal Server Error. 
+  /api/deck/{category_id}:
+    description: >-
+      End point to read, update a deck resource with category_id.
+    get:
+      description: Operation to get deck details
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                title: user object
+                type: object
+                properties:
+                  category_id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: Hindi
+                  description:
+                    type: string
+                    example: Learn Hindi Now!!                  
+        '400':
+          description: Bad request.
+        '404':
+          description: Resource not found.
+        '500':
+          description: Internal Server Error.
+    put:
+        description: Operation to update the deck details
+        parameters:
+          - in: path
+            name: category_id
+            required: true
+            schema:
+              type: integer
+              example: 1
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: Hindi
+                  description:
+                    type: string
+                    example: Learn Hindi!!
+        responses:
+          '200':
+            description: Successfuly updated.
+            content:
+              application/json:
+                schema:
+                  title: user object
+                  type: object
+                  properties:
+                    category_id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: Hindi
+                    description:
+                      type: string
+                      example: Learn Hindi!!
+          '400':
+            description: Bad request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error_code:
+                      type: string
+                    error_message:
+                      type: string
+          '404':
+            description: Resource you requested to update not found
+          '500':
+            description: Internal Server Error
+  /api/deck:
+    description: End point to create and delete a deck.
+    post:
+        description: Operation to create a deck
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: French
+                  description:
+                    type: string
+                    example: Learn French Now!!
+        responses:
+          '200':
+            description: Successfuly updated.
+            content:
+              application/json:
+                schema:
+                  title: user object
+                  type: object
+                  properties:
+                    category_id:
+                      type: integer
+                      example: 5
+                    name:
+                      type: string
+                      example: French
+                    description:
+                      type: string
+                      example: Learn French Now!!
+          '400':
+            description: Bad request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error_code:
+                      type: string
+                    error_message:
+                      type: string
+          '404':
+            description: Resource you requested to update not found
+          '500':
+            description: Internal Server Error
+
+    delete:
+        description: Operation to delete the deck.
+        requestBody:
+          content:
+            application/json:
+              schema:
+                title: user object
+                type: object
+                properties:
+                  category_id:
+                    type: integer
+                    example: 5
+        responses:
+          '200':
+            description: Successfully Deleted.
+          '400':
+            description: Bad request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error_code:
+                      type: string
+                    error_message:
+                      type: string
+          '404':
+            description: Card does not exist.
+          '500':
+            description: Intenal Server Error. 
+    
