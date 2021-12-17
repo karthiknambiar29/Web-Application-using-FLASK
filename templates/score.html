@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8">
+    <title>Score</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta id="scores_data" data-correct="{{ correct_ans }}" data-wrong="{{ wrong_ans }}" data-no_ans="{{ no_ans }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+
+  <body
+    style="vertical-align: middle; align-items: center; display: flex; justify-content: center;  padding-top: 40px;  padding-bottom: 40px; background-color: whitesmoke;">
+    <div class="container">
+      <div class='current_score'>
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">Your Current Score</h1>
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">{{correct_ans}}/{{correct_ans|int + wrong_ans|int + no_ans|int}}</h1>
+      </div>
+      <div style="text-align: center;">
+        <p>Click here to go to Dashboard.</p>
+        <a href="{{ url_for('user', username=username) }}" class="btn btn-outline-primary btn-sm">Dashboard</a>
+
+      </div>
+      <canvas class="my-4 chartjs-render-monitor" width="100" id="myChart"></canvas>
+
+      <table class="table table-borderless">
+        <tbody>
+          <tr>
+            <td style="width: 33%; text-align: center;">Correct Answers</td>
+            <td style="width: 33%; text-align: center;">Wrong Answers</td>
+            <td style="width: 34%; text-align: center;">Skiped Questions</td>
+          </tr>
+          <tr>
+            <td style="width: 33%; text-align: center;">{{correct_ans}}</td>
+            <td style="width: 33%; text-align: center;">{{ wrong_ans }}</td>
+            <td style="width: 34%; text-align: center;">{{no_ans}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <script type="text/javascript">
+        scoreChart()
+      </script>
+      <div class='response'>
+        <h1 class="h2 mb-3 font-weight-normal" style="text-align: left;">Review</h1><hr>
+      {% for answer in answers %}
+      {% if loop.index < 11 %}
+        {% if responses[loop.index-1] == 1%}
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: left;">Card {{ loop.index }}:</h1>
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">Correct Answer</h1>
+        <div class='card-front' style="text-align: center; background-color: green;">
+          <h1 class="h3 mb-3 font-weight-normal" style="text-align: center; ">{{ front[loop.index-1]}}</h1>
+        </div>
+        {% elif responses[loop.index-1] == -1 %}
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: left;">Card {{ loop.index }}:</h1>
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">Wrong Answer</h1>
+        <div class='card-front' style="text-align: center; background-color: red;">
+          <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">{{ front[loop.index-1]}}</h1>
+        </div>
+        {% else %}
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: left;">Card {{ loop.index }}:</h1>
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">Skipped</h1>
+        <div class='card-front' style="text-align: center; background-color: grey;">
+          <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">{{ front[loop.index-1]}}</h1>
+        </div>
+        {% endif %}
+        <br>
+        <table class="table table-borderless">
+        <tbody'>
+            <tr>
+                {% if answers[loop.index-1] == 1%}
+                <td style="width: 25%; text-align: right; background-color: green;">Option 1:</td>
+                <td style="width: 25%; text-align: left; background-color: green;">{{ cards[loop.index-1]['option_1'] }}</td>
+                {% else %}
+                <td style="width: 25%; text-align: right;">Option 1:</td>
+                <td style="width: 25%; text-align: left;">{{ cards[loop.index-1]['option_1'] }}</td>
+                {% endif %}
+
+                {% if answers[loop.index-1] == 2 %}
+                <td style="width: 25%; text-align: right; background-color: green;">Option 2:</td>
+                <td style="width: 25%; text-align: left; background-color: green;">{{ cards[loop.index-1]['option_2'] }}</td>
+                {% else %}
+                <td style="width: 25%; text-align: right;">Option 2:</td>
+                <td style="width: 25%; text-align: left;">{{ cards[loop.index-1]['option_2'] }}</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                {% if answers[loop.index-1] == 3 %}
+                <td style="width: 25%; text-align: right; background-color: green;">Option 3:</td>
+                <td style="width: 25%; text-align: left; background-color: green;">{{ cards[loop.index-1]['option_3'] }}</td>
+                {% else %}
+                <td style="width: 25%; text-align: right;">Option 3:</td>
+                <td style="width: 25%; text-align: left;">{{ cards[loop.index-1]['option_3'] }}</td>
+                {% endif %}
+
+                {% if answers[loop.index-1] == 4 %}
+                <td style="width: 25%; text-align: right; background-color: green;">Option 4:</td>
+                <td style="width: 25%; text-align: left; background-color: green;">{{ cards[loop.index-1]['option_4'] }}</td>
+                {% else %}
+                <td style="width: 25%; text-align: right;">Option 4:</td>
+                <td style="width: 25%; text-align: left;">{{ cards[loop.index-1]['option_4'] }}</td>
+                {% endif %}
+            </tr>
+        </tbody>
+        </table>
+        <br>
+        <br>
+        <br>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <div style="text-align: center;">
+      <p>Click here to go to Dashboard.</p>
+      <a href="{{ url_for('user', username=username) }}" class="btn btn-outline-primary btn-sm">Dashboard</a>
+
+    </div>
+    </div>
+  </body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8">
+    <title>Cards</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}"/>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/custom.js') }}"></script>
+  </head>
+  <body style="height: 100%; vertical-align: middle; align-items: center; display: flex; justify-content: center;  padding-top: 40px;  padding-bottom: 40px; background-color: whitesmoke;">
+    <div class="container" style="text-align: center;">
+      <div style="text-align: center;">
+        <h1 class="h5 mb-3 font-weight-normal" style="text-align: center;">Card: {{q}}</h1>
+      </div>
+        <div class='form-signin' style="text-align: center;">
+          <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">{{ card['front']}}</h1>
+        </div>
+        <br>
+        <form class="form-signin" id="form-signin" method="post">
+          <div class='option'>
+            <label class='o' style="display: inline-block;"><input class='checkbox' type="checkbox"  name="check" value='1' onclick="onlyOne(this)">{{ card['option_1'] }}</label><br>
+            <label class='o' style="display: inline-block;"><input class='checkbox' type="checkbox"  name="check" value='2' onclick="onlyOne(this)">{{ card['option_2'] }}</label><br>
+            <label class='o' style="display: inline-block;"><input class='checkbox' type="checkbox"  name="check" value='3' onclick="onlyOne(this)">{{ card['option_3'] }}</label><br>
+            <label class='o' style="display: inline-block;"><input class='checkbox' type="checkbox" name="check" value='4' onclick="onlyOne(this)">{{ card['option_4'] }}</label><br>
+            <input type="checkbox" style='opacity: 0;' value='0' name="check"  checked="checked" onclick="onlyOne(this)"><br>
+          </div> 
+            <div style="text-align: center;">
+                <button id="login" class="btn btn-primary" value="Login">Submit</button>
+            </div>
+        </form>
+        <br>
+        <br>
+        <div style="text-align: center;">
+          <p>Click here to quit.</p>
+          <a href="{{ url_for('user', username=username) }}" class="btn btn-outline-primary btn-sm">Dashboard</a>
+    
+        </div>
+        <br>
+        <br>
+        
+    </div>
+  </body>
+</html>

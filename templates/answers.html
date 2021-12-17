@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}"/>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+  </head>
+  <body style="height: 100%; vertical-align: middle; align-items: center; display: flex; justify-content: center;  padding-top: 40px;  padding-bottom: 40px; background-color: whitesmoke;">
+    <div class="container">
+    <h1 class="h1 mb-3 font-weight-normal" style="text-align: center;">Answer</h1>
+
+      <div class="form-signin" id="form-signin">
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">{{ card['front'] }}</h1>
+        <br>
+        <h1 class="h5 mb-3 font-weight-normal" style="text-align: center;">{{ correct_option }}</h1>
+      </div>
+      <br>
+      <div style="text-align: center;">
+        <a href="{{url_for('question', username=username, category=category, question=question+1)}}"><button id="login" class="btn btn-primary" value="Login">Next Question</button></a>
+      </div>
+      
+
+    </div>
+  </body>
+</html>

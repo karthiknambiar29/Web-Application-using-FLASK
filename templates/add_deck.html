@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8">
+    <title>Add Deck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}"/>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+  </head>
+  <body style="height: 100%; vertical-align: middle; align-items: center; display: flex; justify-content: center;  padding-top: 40px;  padding-bottom: 40px; background-color: whitesmoke;">
+    <div class="container">
+      
+      <form class="" action="" method="post" id="form-signin">
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">Please add details of new deck.</h1>
+        <br>
+        <label for="username">Deck Name:</label>
+        <input type="text" class="form-control" name="name" id="name" value="{{ request.form.name }}" placeholder="Enter Deck Name" required>
+        <br>
+        <label for="password">Description:</label> 
+        <input type="text" class="form-control" id="description" name="description" placeholder="" value="{{ request.form.description }}" required>
+        <br>
+        <div style="text-align: center;">
+          <button id="create" class="btn btn-primary" type="submit" value="create">Create Deck</button>
+        </div>
+        <br>
+      </form>
+      <div style="text-align: center;">
+        <p>Click here to go to Dashboard.</p>
+        <a href="{{ url_for('user', username=username) }}" class="btn btn-outline-primary btn-sm">Dashboard</a>
+  
+      </div>
+      <br>
+      <br>
+      
+
+    </div>
+  </body>
+</html>

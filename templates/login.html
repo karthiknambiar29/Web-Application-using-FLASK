@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}"/>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+  </head>
+  <body style="height: 100%; vertical-align: middle; align-items: center; display: flex; justify-content: center;  padding-top: 40px;  padding-bottom: 40px; background-color: whitesmoke;">
+    <div class="container">
+      
+      <form class="form-signin" action="" method="post" id="form-signin">
+        {% if register_success %}
+        <span id="error" style="color: green; width: 10px;">Registration Successful!! Please Sign In!!</span>
+        <br>
+        {% endif %}
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">Please sign in</h1>
+        <br>
+        <!-- <label for="username">Username</label> -->
+        <input type="text" class="form-control" name="username" id="username" value="{{ request.form.username }}" placeholder="Enter Username" required>
+        <!-- <label for="password">Password</label> -->
+        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password"value="{{ request.form.password }}" required>
+        {% if error %}
+        <span id="error" style="color: red; width: 10px;">**Username or Password Incorrect</span>
+        {% else %}
+        <span id="error" style="color: red; width: 10px;"></span>
+        {% endif %}
+        <br>
+        <div style="text-align: center;">
+          <button id="login" class="btn btn-primary" type="submit" value="Login">Sign In</button>
+        </div>
+        <br>
+      </form>
+      <div style="text-align: center; margin-top: 5%;">
+        <h6>Don't have an account? Register Now!</h6>
+        <a href="/register"><button id="register" class="btn btn-primary" value="Register">Register Now</button></a>
+      </div>
+
+      
+
+    </div>
+  </body>
+</html>

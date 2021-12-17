@@ -1,0 +1,136 @@
+<div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+        <span class="fs-4">Simple header</span>
+      </a>
+
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Home</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Pricing</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+      </ul>
+    </header>
+</div>
+
+<script>
+  var ctx = document.getElementById("myChart");
+  var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      datasets: [{
+        data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+        lineTension: 0,
+        backgroundColor: 'transparent',
+        borderColor: '#007bff',
+        borderWidth: 4,
+        pointBackgroundColor: '#007bff'
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: false
+          }
+        }]
+      },
+      legend: {
+        display: false,
+      }
+    }
+  });
+</script>
+<div class="container">
+  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+      <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+      <span class="fs-4">Simple header</span>
+    </a>
+
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Home</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Pricing</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+    </ul>
+  </header>
+</div>
+
+# route to handle successful login of user
+@app.route("/<username>", methods=["GET", "POST"])
+def user(username):
+    request_category = request.args.get('category')
+    request_question = request.args.get('q')
+    users = Users.query.filter(Users.name == username).first()
+    user_scores = Scores.query.filter(Scores.user_id == users.user_id).all()
+    scores = []
+    datetimes = []
+    categories = []
+    for user_score in user_scores:
+        scores.append(user_score.score)
+        datetimes.append(user_score.datetime)
+        categories.append(Category.query.filter(Category.category_id==user_score.category_id).first().name)
+    
+    if request_category!=None:
+        if int(request_question) == 0:
+            return render_template('start.html', category=int(request_category), q=int(request_question), user = users)
+        correct = []
+        wrong = []
+        not_answered = []
+
+        cards = Cards.query.filter(Cards.category_id == int(request_category)).all()
+        
+        if request.method == 'POST':
+            request_category = request.args.get('category')
+            request_question = request.args.get('q')
+            # check if answer is correct
+            if int(request_question) <= len(cards):
+                selected_option = request.form['check']
+                score = Scores(user_id=users.user_id, category_id=request_category, q1=int(selected_option))
+
+
+            return redirect(url_for('user', username=username,category=int(request_category), q=int(request_question)+1))
+  
+        if int(request_question) > len(cards):
+            print('score', len(correct))
+            scores = Scores(user_id=users.user_id, score=len(correct), datetime=dt.utcnow(), category_id=int(request_category))
+            db.session.add(scores)
+            db.session.commit()
+            return render_template('score.html', score=len(correct))          
+        return render_template('cards.html', category=int(request_category), q=int(request_question), user = users, card=cards[int(request_question)-1])
+
+
+    return render_template('dashboard.html', user=users,scores = json.dumps(scores), datetimes = json.dumps(datetimes), categories = json.dumps(categories))
+
+    """if request_category!=None:
+    if int(request_question) == 0:
+        return render_template('start.html', category=int(request_category), q=int(request_question), user = users)
+    correct = []
+    wrong = []
+    not_answered = []
+
+    cards = Cards.query.filter(Cards.category_id == int(request_category)).all()
+    
+    if request.method == 'POST':
+        request_category = request.args.get('category')
+        request_question = request.args.get('q')
+        # check if answer is correct
+        if int(request_question) <= len(cards):
+            selected_option = request.form['check']
+            score = Scores(user_id=users.user_id, category_id=request_category, q1=int(selected_option))
+
+
+        return redirect(url_for('user', username=username,category=int(request_category), q=int(request_question)+1))
+
+    if int(request_question) > len(cards):
+        print('score', len(correct))
+        scores = Scores(user_id=users.user_id, score=len(correct), datetime=dt.utcnow(), category_id=int(request_category))
+        db.session.add(scores)
+        db.session.commit()
+        return render_template('score.html', score=len(correct))          
+    return render_template('cards.html', category=int(request_category), q=int(request_question), user = users, card=cards[int(request_question)-1])"""
