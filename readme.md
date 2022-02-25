@@ -12,7 +12,7 @@
     `pip install -r requirements.txt`
 - On the shell run
     `python3 main.py`
-- Or click on `main.py` and click button run
+- Or click on `main.py` and click button run.
 
 # Folder Structure
 
