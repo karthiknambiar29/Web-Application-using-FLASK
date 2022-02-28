@@ -6,7 +6,11 @@ from application.models import Users, Scores, Cards, Category
 from application.database import db
 from flask import current_app as app
 import werkzeug
-from flask import abort
+from flask import abort, request, jsonify, make_response
+
+
+get_user_parser = reqparse.RequestParser()
+get_user_parser.add_argument('name')
 
 create_user_parser = reqparse.RequestParser()
 create_user_parser.add_argument('name')
@@ -27,74 +31,78 @@ resource_fields = {
 
 class UserAPI(Resource):
     @marshal_with(resource_fields)
-    def get(self, username):
+    def post(self):
+        res = request.get_json()
+        # print(res)
+        username = res['name']
         user = Users.query.filter(Users.name==username).first()
         if user is None:
+            # print(user)
             raise NotFoundError(status_code=404)
+        # print(user.password)
         return user
-
-    @marshal_with(resource_fields)
-    def put(self, username):
-        args = update_user_parser.parse_args()
-        password = args.get("password", None)
-        user = Users.query.filter(Users.name == username).first()
+    # @marshal_with(resource_fields)
+    # def put(self, username):
+    #     args = update_user_parser.parse_args()
+    #     password = args.get("password", None)
+    #     user = Users.query.filter(Users.name == username).first()
         
         
-        if user is None:
-            raise NotFoundError(status_code=404)
+    #     if user is None:
+    #         raise NotFoundError(status_code=404)
 
-        if password is None or password == "":
-            raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
+    #     if password is None or password == "":
+    #         raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
 
-        user.password = password
-        db.session.commit()
-        return user
+    #     user.password = password
+    #     db.session.commit()
+    #     return user
 
-    @marshal_with(resource_fields)
-    def post(self):
-        args = create_user_parser.parse_args()
-        username = args.get("name", None)
-        password = args.get("password", None)
+    # @marshal_with(resource_fields)
+    # def post(self):
+    #     args = create_user_parser.parse_args()
+    #     username = args.get("name", None)
+    #     password = args.get("password", None)
 
-        if username is None or username == "":
-            raise NewUserError(status_code=400, error_code='U1001', error_message="username is required")
+    #     if username is None or username == "":
+    #         raise NewUserError(status_code=400, error_code='U1001', error_message="username is required")
 
-        if password is None or password == "" or len(password) < 6:
-            raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
+    #     if password is None or password == "" or len(password) < 6:
+    #         raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
 
-        user = Users.query.filter(Users.name == username).first()
+    #     user = Users.query.filter(Users.name == username).first()
 
-        if user:
-            raise NewUserError(status_code=400, error_code='U1003', error_message="Duplicate User")
+    #     if user:
+    #         raise NewUserError(status_code=400, error_code='U1003', error_message="Duplicate User")
         
-        new_user = Users(name=username, password=password)
+    #     new_user = Users(name=username, password=password)
 
-        db.session.add(new_user)
-        db.session.commit()
-        return new_user
+    #     db.session.add(new_user)
+    #     db.session.commit()
+    #     return new_user
 
-    def delete(self):
-        args = delete_user_pasrser.parse_args()
-        username = args.get("name", None)
-        password = args.get("password", None)
+    # def delete(self):
+    #     args = delete_user_pasrser.parse_args()
+    #     username = args.get("name", None)
+    #     password = args.get("password", None)
 
-        if username is None:
-            raise NewUserError(status_code=400, error_code='U1001', error_message="username is required")
+    #     if username is None:
+    #         raise NewUserError(status_code=400, error_code='U1001', error_message="username is required")
 
-        if password is None:
-            raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
+    #     if password is None:
+    #         raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
 
-        user = Users.query.filter(db.and_(Users.name == username, Users.password==password)).first()
+    #     user = Users.query.filter(db.and_(Users.name == username, Users.password==password)).first()
 
-        if user is None:
-            raise NotFoundError(status_code=404)
+    #     if user is None:
+    #         raise NotFoundError(status_code=404)
 
-        scores = Scores.query.filter(Scores.user_id==user.user_id).all()
-        for score in scores:
-            db.session.delete(score)
-        db.session.delete(user)
-        db.session.commit()
-        raise NotFoundError(status_code=200)
+    #     scores = Scores.query.filter(Scores.user_id==user.user_id).all()
+    #     for score in scores:
+    #         db.session.delete(score)
+    #     db.session.delete(user)
+    #     db.session.commit()
+    #     raise NotFoundError(status_code=200)
 
 update_card_parser = reqparse.RequestParser()
 update_card_parser.add_argument('category_id')

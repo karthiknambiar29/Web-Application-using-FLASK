@@ -10,7 +10,12 @@ from flask import json
 @app.route("/", methods=["GET", "POST"])
 def home():
     return render_template("home.html")
-
+@app.route("/login_2", methods=["GET", "POST"])
+def login_2():
+    if request.method == "POST":
+        return None
+    
+    return render_template("login_2.html")
 # Route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
 def login():
