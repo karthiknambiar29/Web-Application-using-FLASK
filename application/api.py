@@ -1,3 +1,5 @@
+from datetime import datetime
+from os import access
 from flask_restful import Resource, Api
 from flask_restful import fields, marshal_with
 from flask_restful import reqparse
@@ -7,6 +9,9 @@ from application.database import db
 from flask import current_app as app
 import werkzeug
 from flask import abort, request, jsonify, make_response
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+
+
 
 
 get_user_parser = reqparse.RequestParser()
@@ -30,17 +35,17 @@ resource_fields = {
 }
 
 class UserAPI(Resource):
-    @marshal_with(resource_fields)
+
     def post(self):
-        res = request.get_json()
-        # print(res)
-        username = res['name']
+        username = request.json.get('name', None) 
+        password = request.json.get('password', None)
         user = Users.query.filter(Users.name==username).first()
         if user is None:
-            # print(user)
             raise NotFoundError(status_code=404)
-        # print(user.password)
-        return user
+        # return user
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token)
+
     # @marshal_with(resource_fields)
     # def put(self, username):
     #     args = update_user_parser.parse_args()
