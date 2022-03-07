@@ -8,7 +8,9 @@
   border-style: outset;
   border-radius: 15px;
 }
-
+.submit-button {
+  text-align: center;
+}
 .option {
   width: 400px;
   max-width: 500px;

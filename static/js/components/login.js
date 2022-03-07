@@ -1,16 +1,24 @@
 var login_form = {
     template: `
-        <div>
-            <h3> Login </h3>
-            <b-form @submit="login">
+        <div class="container form">
+            <b-form class="form-signin" @submit="checkForm">
+                <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">Login</h1
                 <b-form-group>
-                    <b-form-input type="text" id="username" v-model="username" /> 
+                    <b-form-input type="text" id="username" v-model="username" placeholder="Enter Username" required /> 
                 </b-form-group>
                 <b-form-group>
-                    <b-form-input type="password" id="password" v-model="password" /> 
+                    <b-form-input type="password" id="password" v-model="password" placeholder="Enter Password" required /> 
                 </b-form-group>
-                <b-button type="submit">Login</b-button>
+                <h6 v-if="error_username_password">Username or Password not correct!!</h6>
+                <br>
+                <div class="submit-button">
+                    <b-button class="submit-button" variant="outline-primary" type="submit">Login</b-button>
+                </div>            
             </b-form>
+            <div style="text-align: center; margin-top: 5%;">
+                <h6>Don't have an account? Register Now!</h6>
+                <b-link to="/register"><b-button class="submit-button" variant="outline-primary">Register</b-button></b-link> 
+            </div>
         </div>
         `,
     data: function() {
@@ -18,10 +26,11 @@ var login_form = {
           username: "",
           password: "",
           errors: [],
+          error_username_password: false
         }
     },
     methods: {
-        checkFrom: function(e) {
+        checkForm: function(e) {
             this.errors = [];
             if (this.username.length <= 5) {
                 this.errors.push("Username should have 6 or more characters!!");
@@ -31,31 +40,35 @@ var login_form = {
             }
             if (!this.errors.length) {
                 return this.login();
+            } else {
+                alert(this.errors.join("\n"))
             }
             e.preventDefault();
         },
-        login: function() {
-            fetch(`http://172.28.134.31:8080/api/user`, {
-                body: JSON.stringify({"name":this.username, "password":this.password}),
-                headers: {
-                  Accept: "*/*",
-                  "Content-Type": "application/json"
-                },
-                method: "POST",
-				})
-				.then(response => response.json())
-				.then(data => {
-					console.log('Success:', data);
-                    localStorage.setItem("jwt-token", data.access_token)
-				})
-				.catch((error) => {
-					console.log('Error:', error);
-				});
-            // console.log(JSON.stringify({name: this.username, password: this.password}))
-            this.username = "";
-            this.password = "";
+        async login() {
+            try {
+                const response = await fetch(`http://172.28.134.31:8080/api/user`, {
+                    body: JSON.stringify({"name":this.username, "password":this.password}),
+                    headers: {
+                      Accept: "*/*",
+                      "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    })
+                if (response.status == 404) {
+                    // this.error_username_password = true;
+                    alert("Username or Password not correct!!")
+                    this.username = "";
+                    this.password = "";
+                } else if (response.status == 200) {
+                    const data = await response.json();
+                    console.log("Success:" , data)
+                    
+                }
 
-
+            } catch(error) {
+                console.log('Error:', error);
+            }
         },
     },
 }
