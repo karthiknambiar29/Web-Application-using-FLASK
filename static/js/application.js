@@ -1,15 +1,8 @@
 import home_page from "./components/home.js"
 import login_form from "./components/login.js"
 import register_form from "./components/register.js"
+import dashboard from "./components/dashboard.js"
 
-var dashboard = {
-    template :`
-    <div>
-        <h3>H</h3>
-    </div>
-    `,
-    
-}
 
 const routes = [
     {
@@ -21,8 +14,10 @@ const routes = [
     },{
         path: "/register",
         component: register_form
+    },{
+        path: '/dashboard',
+        component: dashboard
     }
-
 ]
 
 const router = new VueRouter({

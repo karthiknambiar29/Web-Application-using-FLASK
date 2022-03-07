@@ -43,8 +43,15 @@ class UserAPI(Resource):
         if user is None:
             raise NotFoundError(status_code=404)
         # return user
-        access_token = create_access_token(identity=username)
+        access_token = create_access_token(identity=user.user_id)
         return jsonify(access_token=access_token)
+    
+    @jwt_required()
+    def get(self):
+        # current_user = get_jwt_identity()
+        # user = Users.query.filter(Users.user_id == current_user).first()
+        # print(user.name)
+        return {"hello":"world"}
 
     # @marshal_with(resource_fields)
     # def put(self, username):
