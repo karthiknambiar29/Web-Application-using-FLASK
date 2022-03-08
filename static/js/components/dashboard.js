@@ -3,10 +3,23 @@ var dashboard = {
         <div class="container">
             <div style="text-align: center; margin-top: 5%;">
                 <h6>Welcome {{ username }}</h6>
+                <p>{{ category }}</p>
+                <p>{{ scores }}</p>
                 <h6>Progress Chart</h6>
                 <canvas class="my-4 chartjs-render-monitor" id="myChart" width="100" height="25"></canvas>
                 <h6>Flashcard Decks</h6>
-                
+                <div v-for="cat in category">
+                    <b-card :title="cat['name']" :sub-title="cat['description']" >
+                        <b-card-text>
+                            
+                        </b-card-text>
+
+                        <b-card-text>A second paragraph of text in the card.</b-card-text>
+
+                        <a href="#" class="card-link">Card link</a>
+                        <b-link href="#" class="card-link">Another link</b-link>
+                    </b-card>
+                </div>
                 <b-button class="submit-button" variant="outline-primary" @submit="getUser">Register</b-button>
             </div>
         </div>
@@ -15,9 +28,7 @@ var dashboard = {
       return {
           username: "",
           scores: {},
-          password: "",
-          errors: [],
-          error_username_password: false
+          category: [],
         }
     },
     methods:{
@@ -33,6 +44,7 @@ var dashboard = {
                 const data = await response.json();
                 this.username = data.username;
                 this.scores = data.scores;
+                this.category = data.category;
                 if (this.scores.scores.length > 7) {
                     this.scores.scores = this.scores.scores.slice(-7);
                     this.scores.datetimes = this.scores.datetimes.slice(-7);

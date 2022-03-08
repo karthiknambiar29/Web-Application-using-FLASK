@@ -52,7 +52,6 @@ class UserAPI(Resource):
         user = Users.query.filter(Users.user_id == current_user).first()
         
         user_scores = Scores.query.filter(Scores.user_id == user.user_id).all()
-        category = Category.query.all()
         scores = []
         datetimes = []
         categories = []
@@ -71,12 +70,18 @@ class UserAPI(Resource):
         user_score_last = db.session.query(db.func.max(Scores.datetime)).filter(Scores.user_id==user.user_id).group_by(Scores.category_id).all()
         user_score_last = [date_time[0].strftime("%b %d %Y %H:%M:%S") for date_time in user_score_last]
         print(user_score_avg, user_score_category, user_score_last)
+        category_ = []
+        category = Category.query.all()
+        for cat in category:
+            dictionary = cat.__dict__
+            dictionary.pop("_sa_instance_state")
+            category_.append(dictionary)
         s = {}
         s["scores"] = scores
         s["datetimes"] = datetimes
         s["categories"] = categories
         # s = json.dumps(s)
-        return jsonify(username=user.name, scores=s)
+        return jsonify(username=user.name, scores=s, category=category_)
 
     # @marshal_with(resource_fields)
     # def put(self, username):
