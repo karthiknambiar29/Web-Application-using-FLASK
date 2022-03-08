@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from os import access
 from flask_restful import Resource, Api
 from flask_restful import fields, marshal_with
@@ -8,7 +8,7 @@ from application.models import Users, Scores, Cards, Category
 from application.database import db
 from flask import current_app as app
 import werkzeug
-from flask import abort, request, jsonify, make_response
+from flask import abort, request, jsonify, make_response, json
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 
 
@@ -48,10 +48,35 @@ class UserAPI(Resource):
     
     @jwt_required()
     def get(self):
-        # current_user = get_jwt_identity()
-        # user = Users.query.filter(Users.user_id == current_user).first()
-        # print(user.name)
-        return {"hello":"world"}
+        current_user = get_jwt_identity()
+        user = Users.query.filter(Users.user_id == current_user).first()
+        
+        user_scores = Scores.query.filter(Scores.user_id == user.user_id).all()
+        category = Category.query.all()
+        scores = []
+        datetimes = []
+        categories = []
+        for user_score in user_scores:
+            scores.append(user_score.score)
+            datetimes.append(user_score.datetime.strftime("%b %d %Y %H:%M:%S"))
+            cat = Category.query.filter(Category.category_id==user_score.category_id).first()
+            if cat is not None:
+                categories.append(cat.name)
+            else:
+                categories.append('None')
+        user_score_avg = db.session.query(db.func.avg(Scores.score).label('average')).filter(Scores.user_id==user.user_id).group_by(Scores.category_id).all()
+        user_score_avg = [round(user_score[0], 2) for user_score in user_score_avg]
+        user_score_category = db.session.query(Scores.category_id).filter(Scores.user_id==user.user_id).group_by(Scores.category_id).all()
+        user_score_category = [user_score[0] for user_score in user_score_category]
+        user_score_last = db.session.query(db.func.max(Scores.datetime)).filter(Scores.user_id==user.user_id).group_by(Scores.category_id).all()
+        user_score_last = [date_time[0].strftime("%b %d %Y %H:%M:%S") for date_time in user_score_last]
+        print(user_score_avg, user_score_category, user_score_last)
+        s = {}
+        s["scores"] = scores
+        s["datetimes"] = datetimes
+        s["categories"] = categories
+        # s = json.dumps(s)
+        return jsonify(username=user.name, scores=s)
 
     # @marshal_with(resource_fields)
     # def put(self, username):
