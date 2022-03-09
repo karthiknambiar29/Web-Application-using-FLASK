@@ -1,26 +1,22 @@
+import nav_bar from "./navbar.js";
+import leaderboard from "./leaderboard.js";
+import decks from "./decks.js";
+
 var dashboard = {
+    components: {
+        'nav-bar': nav_bar,
+        'leaderboard': leaderboard,
+        'decks': decks
+    },
     template: `
         <div class="container">
-            <div style="text-align: center; margin-top: 5%;">
-                <h6>Welcome {{ username }}</h6>
-                <p>{{ category }}</p>
-                <p>{{ scores }}</p>
-                <h6>Progress Chart</h6>
+        <nav-bar></nav-bar>
+            <div >
+                <h6 style="text-align: center; margin-top: 5%;">Welcome {{ username }}</h6>
+                <h2 style="text-align: left; margin-top: 5%;">Progress Chart</h2>
                 <canvas class="my-4 chartjs-render-monitor" id="myChart" width="100" height="25"></canvas>
-                <h6>Flashcard Decks</h6>
-                <div v-for="cat in category">
-                    <b-card :title="cat['name']" :sub-title="cat['description']" >
-                        <b-card-text>
-                            
-                        </b-card-text>
-
-                        <b-card-text>A second paragraph of text in the card.</b-card-text>
-
-                        <a href="#" class="card-link">Card link</a>
-                        <b-link href="#" class="card-link">Another link</b-link>
-                    </b-card>
-                </div>
-                <b-button class="submit-button" variant="outline-primary" @submit="getUser">Register</b-button>
+                <decks isDashboard></decks>
+                <leaderboard isDashboard></leaderboard>
             </div>
         </div>
         `,
@@ -29,6 +25,8 @@ var dashboard = {
           username: "",
           scores: {},
           category: [],
+          isDashboard: true
+        //   leaderboard: {},
         }
     },
     methods:{
@@ -45,6 +43,8 @@ var dashboard = {
                 this.username = data.username;
                 this.scores = data.scores;
                 this.category = data.category;
+                // this.leaderboard = data.leaderboard;
+                // console.log(this.leaderboard)
                 if (this.scores.scores.length > 7) {
                     this.scores.scores = this.scores.scores.slice(-7);
                     this.scores.datetimes = this.scores.datetimes.slice(-7);

@@ -63,7 +63,7 @@ var login_form = {
                 } else if (response.status == 200) {
                     const data = await response.json();
                     localStorage.setItem("jwt-token", data.access_token)
-                    // this.$router.push({path:"/dashboard"})
+                    this.$router.push({path:"/dashboard"})
                     // console.log("Success:" , data)
                     
                 }

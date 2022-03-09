@@ -1,7 +1,10 @@
 import home_page from "./components/home.js"
 import login_form from "./components/login.js"
 import register_form from "./components/register.js"
+import nav_bar from "./components/navbar.js";
 import dashboard from "./components/dashboard.js"
+import leaderboard from "./components/leaderboard.js"
+import decks from "./components/decks.js"
 
 
 const routes = [
@@ -17,6 +20,13 @@ const routes = [
     },{
         path: '/dashboard',
         component: dashboard
+    },
+    {
+        path: "/leaderboard",
+        component: leaderboard
+    },{
+        path: "/decks",
+        component: decks
     }
 ]
 
@@ -25,22 +35,6 @@ const router = new VueRouter({
     // mode: 'history'
 })
 
-
-// async function protected() {
-//     const options = {
-//         method : 'GET',
-//         headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-//         }
-//     };
-//     fetch(`http://172.28.134.31:8080/protected`, options)
-//     .then(response => response.json())
-//     .then(data => console.log('Success:', data))
-//     .catch((error) => {
-//         console.log('Error:', error)
-//     })
-// }
 
 
 

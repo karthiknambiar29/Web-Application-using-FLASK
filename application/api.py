@@ -69,82 +69,45 @@ class UserAPI(Resource):
         user_score_category = [user_score[0] for user_score in user_score_category]
         user_score_last = db.session.query(db.func.max(Scores.datetime)).filter(Scores.user_id==user.user_id).group_by(Scores.category_id).all()
         user_score_last = [date_time[0].strftime("%b %d %Y %H:%M:%S") for date_time in user_score_last]
-        print(user_score_avg, user_score_category, user_score_last)
+
         category_ = []
         category = Category.query.all()
         for cat in category:
             dictionary = cat.__dict__
+            if dictionary["category_id"] in user_score_category:
+                dictionary["avg_score"] = user_score_avg[user_score_category.index(dictionary["category_id"])]
+
+                dictionary["last_score"] = user_score_last[user_score_category.index(dictionary["category_id"])]
+            else:
+                dictionary["avg_score"] = None
+                dictionary["last_score"] = None    
             dictionary.pop("_sa_instance_state")
             category_.append(dictionary)
+
         s = {}
         s["scores"] = scores
         s["datetimes"] = datetimes
         s["categories"] = categories
-        # s = json.dumps(s)
-        return jsonify(username=user.name, scores=s, category=category_)
+        return jsonify(username=user.name, scores=s, category=category_)#, leaderboard=leaders)
 
-    # @marshal_with(resource_fields)
-    # def put(self, username):
-    #     args = update_user_parser.parse_args()
-    #     password = args.get("password", None)
-    #     user = Users.query.filter(Users.name == username).first()
-        
-        
-    #     if user is None:
-    #         raise NotFoundError(status_code=404)
-
-    #     if password is None or password == "":
-    #         raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
-
-    #     user.password = password
-    #     db.session.commit()
-    #     return user
-
-    # @marshal_with(resource_fields)
-    # def post(self):
-    #     args = create_user_parser.parse_args()
-    #     username = args.get("name", None)
-    #     password = args.get("password", None)
-
-    #     if username is None or username == "":
-    #         raise NewUserError(status_code=400, error_code='U1001', error_message="username is required")
-
-    #     if password is None or password == "" or len(password) < 6:
-    #         raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
-
-    #     user = Users.query.filter(Users.name == username).first()
-
-    #     if user:
-    #         raise NewUserError(status_code=400, error_code='U1003', error_message="Duplicate User")
-        
-    #     new_user = Users(name=username, password=password)
-
-    #     db.session.add(new_user)
-    #     db.session.commit()
-    #     return new_user
-
-    # def delete(self):
-    #     args = delete_user_pasrser.parse_args()
-    #     username = args.get("name", None)
-    #     password = args.get("password", None)
-
-    #     if username is None:
-    #         raise NewUserError(status_code=400, error_code='U1001', error_message="username is required")
-
-    #     if password is None:
-    #         raise NewUserError(status_code=400, error_code='U1002', error_message="password is required")
-
-    #     user = Users.query.filter(db.and_(Users.name == username, Users.password==password)).first()
-
-    #     if user is None:
-    #         raise NotFoundError(status_code=404)
-
-    #     scores = Scores.query.filter(Scores.user_id==user.user_id).all()
-    #     for score in scores:
-    #         db.session.delete(score)
-    #     db.session.delete(user)
-    #     db.session.commit()
-    #     raise NotFoundError(status_code=200)
+   
+class ScoreAPI(Resource):
+    @jwt_required()
+    def get(self):
+        category = Category.query.all()
+        keys = ["Name", "Score", "Date"]
+        leaders = {}
+        for cat in category:
+            leader = db.session.query(Users.name, Scores.score, Scores.datetime).filter(db.and_(Users.user_id == Scores.user_id, Scores.category_id==cat.category_id, Category.category_id==Scores.category_id)).order_by(Scores.score.desc(), Scores.datetime.desc()).all()
+            # print(leader)
+            leader = [dict(zip(keys, name)) for name in leader]
+            # print(leader)
+            for l in leader:
+                l["Date"] = l["Date"].strftime("%b %d %Y %H:%M:%S")
+            if len(leader) == 0:
+                leader = [dict(zip(keys, [None, None, None]))]
+            leaders[cat.name]= leader
+        return jsonify(leaderboard=leaders)
 
 update_card_parser = reqparse.RequestParser()
 update_card_parser.add_argument('category_id')
@@ -292,12 +255,32 @@ delete_deck_parser = reqparse.RequestParser()
 delete_deck_parser.add_argument('category_id')
 
 class DeckAPI(Resource):
-    @marshal_with(deck_resource_fields)
-    def get(self, category_id):
-        category = Category.query.filter(Category.category_id==category_id).first()
-        if category is None:
-            raise NotFoundError(status_code=404)
-        return category
+    @jwt_required()
+    def get(self):
+        current_user = get_jwt_identity()
+        user = Users.query.filter(Users.user_id == current_user).first()
+        user_score_avg = db.session.query(db.func.avg(Scores.score).label('average')).filter(Scores.user_id==user.user_id).group_by(Scores.category_id).all()
+        user_score_avg = [round(user_score[0], 2) for user_score in user_score_avg]
+        user_score_category = db.session.query(Scores.category_id).filter(Scores.user_id==user.user_id).group_by(Scores.category_id).all()
+        user_score_category = [user_score[0] for user_score in user_score_category]
+        user_score_last = db.session.query(db.func.max(Scores.datetime)).filter(Scores.user_id==user.user_id).group_by(Scores.category_id).all()
+        user_score_last = [date_time[0].strftime("%b %d %Y %H:%M:%S") for date_time in user_score_last]
+
+
+        category_ = []
+        category = Category.query.all()
+        for cat in category:
+            dictionary = cat.__dict__
+            if dictionary["category_id"] in user_score_category:
+                dictionary["avg_score"] = user_score_avg[user_score_category.index(dictionary["category_id"])]
+
+                dictionary["last_score"] = user_score_last[user_score_category.index(dictionary["category_id"])]
+            else:
+                dictionary["avg_score"] = None
+                dictionary["last_score"] = None    
+            dictionary.pop("_sa_instance_state")
+            category_.append(dictionary)
+        return jsonify(category=category_)
 
     @marshal_with(deck_resource_fields)
     def put(self, category_id):

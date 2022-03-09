@@ -27,10 +27,11 @@ app, api = create_app()
 from application.controllers import *
 
 
-from application.api import UserAPI, CardAPI, DeckAPI
+from application.api import ScoreAPI, UserAPI, CardAPI, DeckAPI
 api.add_resource(UserAPI, "/api/user", "/api/user/<string:username>")
 api.add_resource(CardAPI, "/api/card","/api/card/<int:card_id>")
 api.add_resource(DeckAPI, "/api/deck", "/api/deck/<int:category_id>")
+api.add_resource(ScoreAPI, "/api/score")
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0',port=8080)
