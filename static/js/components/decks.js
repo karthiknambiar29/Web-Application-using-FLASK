@@ -31,8 +31,9 @@ var decks = {
                         <b-card-text>Average Score : {{ cat['avg_score'] }}</b-card-text>
                         <b-card-text>Last Attempted : {{ cat['last_score'] }}</b-card-text>
                     </div>
-                    <a href="#" class="card-link">Card link</a>
-                    <b-link href="#" class="card-link">Another link</b-link>
+                    <br>
+                    <b-link href="#" class="card-link" v-if="!isDashboard"><b-button class="submit-button" variant="outline-primary">Show Cards</b-button></b-link>
+                    <b-link href="#" class="card-link" v-if="isDashboard"><b-button class="submit-button" variant="outline-primary">Take Quiz</b-button></b-link>
                 </b-card>
             </div>
         </div>

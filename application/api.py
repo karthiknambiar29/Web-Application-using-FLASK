@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from os import access
+from unicodedata import category
 from flask_restful import Resource, Api
 from flask_restful import fields, marshal_with
 from flask_restful import reqparse
@@ -10,29 +11,8 @@ from flask import current_app as app
 import werkzeug
 from flask import abort, request, jsonify, make_response, json
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+from random import shuffle
 
-
-
-
-get_user_parser = reqparse.RequestParser()
-get_user_parser.add_argument('name')
-
-create_user_parser = reqparse.RequestParser()
-create_user_parser.add_argument('name')
-create_user_parser.add_argument('password')
-
-update_user_parser = reqparse.RequestParser()
-update_user_parser.add_argument('password')
-
-delete_user_pasrser = reqparse.RequestParser()
-delete_user_pasrser.add_argument('name')
-delete_user_pasrser.add_argument('password')
-
-resource_fields = {
-    'user_id': fields.Integer,
-    'name': fields.String,
-    'password': fields.String
-}
 
 class UserAPI(Resource):
 
@@ -142,8 +122,21 @@ card_resource_fields = {
     'option_4': fields.String,
 }
 
+class allCardsAPI(Resource):
+    @jwt_required()
+    def get(self, category_id):
+        category = Category.query.filter(Category.category_id == category_id).first()
+        cards = Cards.query.filter(Cards.category_id == category_id).all()
+        shuffle(cards)
+        card_ids = []
+        if len(cards) > 10:
+            cards = cards[:10]
+        for card in cards:
+            card_ids.append(card.card_id)
+        return jsonify(title=category.name, description=category.description,card_ids=card_ids)
 
 class CardAPI(Resource):
+    @jwt_required()
     @marshal_with(card_resource_fields)
     def get(self, card_id):
         card = Cards.query.filter(Cards.card_id==int(card_id)).first()

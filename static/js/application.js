@@ -5,7 +5,8 @@ import nav_bar from "./components/navbar.js";
 import dashboard from "./components/dashboard.js"
 import leaderboard from "./components/leaderboard.js"
 import decks from "./components/decks.js"
-
+import category from "./components/category.js";
+import quiz from "./components/quiz.js";
 
 const routes = [
     {
@@ -27,8 +28,16 @@ const routes = [
     },{
         path: "/decks",
         component: decks
+    },{
+        path: "/start/:category_id",
+        component: category,
+        
+    },{
+        path: "/quiz/:category_id/:question",
+        component: quiz
     }
 ]
+
 
 const router = new VueRouter({
     routes: routes,

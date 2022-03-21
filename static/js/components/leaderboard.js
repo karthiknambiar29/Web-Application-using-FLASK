@@ -39,7 +39,7 @@ var leaderboard = {
                 })
                 const data = await response.json();
                 this.leaderboard = data.leaderboard;
-                // console.log(Object.keys(this.leaderboard))
+                // console.log(Object.entries(this.leaderboard)[0][1][0])
             } catch(error){
 
             }
