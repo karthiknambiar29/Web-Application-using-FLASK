@@ -50,10 +50,22 @@ var quiz = {
             }
         },
         nextQuestion() {
-            // var answers = localStorage.getItem("answers");
-            // if (!answers) {
-            //     const ans = JSON.stringify({$route.params.question): this.additional_grouped})
-            // }
+            var answers = localStorage.getItem("answers");
+            if (!answers) {
+                const keys = parseInt(this.$route.params.question);
+                console.log(typeof(keys))
+                let ans = {};
+                ans[keys] = this.additional_grouped[0]
+                ans = JSON.stringify(ans)
+                localStorage.setItem('answers', ans)
+            } else {
+                let ans = JSON.parse(answers)
+                const keys = parseInt(this.$route.params.question);
+                ans[keys] = this.additional_grouped[0]
+                ans = JSON.stringify(ans)
+                localStorage.removeItem("answers")
+                localStorage.setItem('answers', ans)
+            }
             if (parseInt(this.$route.params.question) < 10) {
                 this.$router.push({path: `/quiz/${this.$route.params.category_id}/${parseInt(this.$route.params.question)+1}`})
             } else {

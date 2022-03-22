@@ -32,7 +32,7 @@ api.add_resource(UserAPI, "/api/user", "/api/user/<string:username>")
 api.add_resource(CardAPI, "/api/card","/api/card/<int:card_id>")
 api.add_resource(DeckAPI, "/api/deck", "/api/deck/<int:category_id>")
 api.add_resource(ScoreAPI, "/api/score")
-api.add_resource(allCardsAPI, "/api/allcards/<int:category_id>")
+api.add_resource(allCardsAPI, "/api/allcards", "/api/allcards/<int:category_id>")
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0',port=8080)

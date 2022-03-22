@@ -135,6 +135,28 @@ class allCardsAPI(Resource):
             card_ids.append(card.card_id)
         return jsonify(title=category.name, description=category.description,card_ids=card_ids)
 
+    @jwt_required()
+    def post(self):
+        answers = request.json.get("answers", None)
+        card_ids = request.json.get("card_ids", None)
+        # print(type(answers), type(card_ids))
+        allcards = {}
+        for i, id in enumerate(card_ids):
+            temp = {}
+            card = Cards.query.filter(Cards.card_id == id).first()
+            temp["front"] = card.front
+            temp["option_1"] = card.option_1
+            temp["option_2"] = card.option_2
+            temp["option_3"] = card.option_3
+            temp["option_4"] = card.option_4
+            temp["correct_ans"] = card.answer
+            if str(i) not in answers.keys():
+                temp["given_ans"] = 0
+            else:
+                temp["given_ans"] = int(answers[str(i)])
+            allcards[i] = temp
+        return allcards
+
 class CardAPI(Resource):
     @jwt_required()
     @marshal_with(card_resource_fields)

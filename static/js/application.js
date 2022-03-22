@@ -7,6 +7,7 @@ import leaderboard from "./components/leaderboard.js"
 import decks from "./components/decks.js"
 import category from "./components/category.js";
 import quiz from "./components/quiz.js";
+import score from "./components/score.js";
 
 const routes = [
     {
@@ -35,6 +36,9 @@ const routes = [
     },{
         path: "/quiz/:category_id/:question",
         component: quiz
+    },{
+        path: "/score",
+        component: score 
     }
 ]
 
