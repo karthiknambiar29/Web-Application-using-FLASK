@@ -12,7 +12,7 @@ import werkzeug
 from flask import abort, request, jsonify, make_response, json
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 from random import shuffle
-
+from datetime import datetime
 
 class UserAPI(Resource):
 
@@ -88,6 +88,22 @@ class ScoreAPI(Resource):
                 leader = [dict(zip(keys, [None, None, None]))]
             leaders[cat.name]= leader
         return jsonify(leaderboard=leaders)
+
+    @jwt_required()
+    def post(self):
+        category_id = request.json.get("category_id", None)
+        score = request.json.get("score", None)
+        current_user = get_jwt_identity()
+        user = Users.query.filter(Users.user_id == current_user).first()
+        result = {}
+        result["user_id"] = current_user
+        result["category_id"] = category_id
+        result["score"] = score
+        result["datetime"] = datetime.utcnow()
+        score = Scores(**result)
+        db.session.add(score)
+        db.session.commit()
+        return {"msg":"Scores stored successfully!"}
 
 update_card_parser = reqparse.RequestParser()
 update_card_parser.add_argument('category_id')

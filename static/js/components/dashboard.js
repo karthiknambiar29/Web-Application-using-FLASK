@@ -61,26 +61,31 @@ var dashboard = {
                     data: {
                         labels: c,
                         datasets: [{
-                        data: this.scores.scores,
-                        lineTension: 0,
-                        backgroundColor: 'transparent',
-                        borderColor: '#007bff',
-                        borderWidth: 4,
-                        pointBackgroundColor: '#007bff'
+                            data: this.scores.scores,
+                            lineTension: 0,
+                            backgroundColor: 'transparent',
+                            borderColor: '#007bff',
+                            borderWidth: 4,
+                            pointBackgroundColor: '#007bff'
                         }],
                         datalabels: {
-                        align: 'start',
-                        anchor: 'start'
+                            align: 'start',
+                            anchor: 'start'
                         }
                     
                     },
                     options: {
                         scales: {
                             yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10,
-                            }
+                                scaleLabel: {
+                                    labelString: "Percentage",
+                                display: true
+                                },
+                                ticks: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    
+                                }
                             }],
                             xAxes: [{
                             }]

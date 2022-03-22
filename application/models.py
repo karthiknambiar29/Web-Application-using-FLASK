@@ -29,32 +29,12 @@ class Scores(db.Model):
     score = db.Column(db.Integer)
     datetime = db.Column(db.DateTime)
     category_id = db.Column(db.Integer, db.ForeignKey("category.category_id"), nullable=False)
-    q1 = db.Column(db.Integer)
-    q2 = db.Column(db.Integer)
-    q3 = db.Column(db.Integer)
-    q4 = db.Column(db.Integer)
-    q5 = db.Column(db.Integer)
-    q6 = db.Column(db.Integer)
-    q7 = db.Column(db.Integer)
-    q8 = db.Column(db.Integer)
-    q9 = db.Column(db.Integer)
-    q10 = db.Column(db.Integer)
 
-    def __init__(self, user_id, score, datetime, category_id, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10):
+    def __init__(self, user_id, score, datetime, category_id):
         self.user_id = user_id
         self.score = score
         self.datetime = datetime
         self.category_id = category_id
-        self.q1 = q1
-        self.q2 = q2
-        self.q3 = q3
-        self.q4 = q4
-        self.q5 = q5
-        self.q6 = q6
-        self.q7 = q7
-        self.q8 = q8
-        self.q9 = q9
-        self.q10 = q10
 
 class Category(db.Model):
     __tablename__ = 'category'

@@ -37,7 +37,7 @@ const routes = [
         path: "/quiz/:category_id/:question",
         component: quiz
     },{
-        path: "/score",
+        path: "/score/:category_id",
         component: score 
     }
 ]

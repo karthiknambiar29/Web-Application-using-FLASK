@@ -20,7 +20,10 @@ var quiz = {
                         :options="options"></b-form-radio-group>
                 </b-form-group>
             </b-card>
-            <b-button class="submit-button" @click="nextQuestion" variant="outline-primary">Next</b-button></b-link>
+            <br>
+            <div class="text-center">
+                <b-button style="text-align:center" class="submit-button text-center" @click="nextQuestion" variant="outline-primary">Next</b-button>
+            </div>
         </div>
     `,
     methods: {
@@ -69,7 +72,7 @@ var quiz = {
             if (parseInt(this.$route.params.question) < 10) {
                 this.$router.push({path: `/quiz/${this.$route.params.category_id}/${parseInt(this.$route.params.question)+1}`})
             } else {
-                this.$router.push({path: "/score"})
+                this.$router.push({path: `/score/${this.$route.params.category_id}`})
             }
         }
     },

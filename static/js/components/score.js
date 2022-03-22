@@ -46,7 +46,7 @@ var score = {
                 })
 
                 const data = await response.json();
-                console.log(data)
+                // console.log(data)
                 let correct = 0;
                 let wrong = 0;
                 let skipped = 0;  
@@ -71,10 +71,10 @@ var score = {
                     }
                     options[value.correct_ans-1]["_rowVariant"] = "success"
                     
-                    console.log(options)
+                    // console.log(options)
                     value.options = options
                 }
-                console.log(data)
+                // console.log(data)
                 this.score = correct*10;
                 this.cards = data
                 this.result.push({"Correct": correct, "Wrong": wrong, "Skipped":skipped})
@@ -97,6 +97,15 @@ var score = {
                         responsive: true, 
                         maintainAspectRatio: true, 
                     }
+                });
+                const res = await fetch(`http://172.28.134.31:8080/api/score`, {
+                    body: JSON.stringify({"score": this.score, "category_id":parseInt(this.$route.params.category_id)}),
+                    headers:{
+                        Accept: "*/*",
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem('jwt-token')}`,
+                    },
+                    method: "POST",
                 });
             } catch (error){
                 console.log(error)

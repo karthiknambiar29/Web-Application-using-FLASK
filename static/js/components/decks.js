@@ -33,12 +33,15 @@ var decks = {
                     </div>
                     <br>
                     <b-link href="#" class="card-link" v-if="!isDashboard"><b-button class="submit-button" variant="outline-primary">Show Cards</b-button></b-link>
-                    <b-link href="#" class="card-link" v-if="isDashboard"><b-button class="submit-button" variant="outline-primary">Take Quiz</b-button></b-link>
+                    <b-link href="#" class="card-link" v-if="isDashboard"><b-button class="submit-button" @click="startQuiz(cat['category_id'])"variant="outline-primary">Take Quiz</b-button></b-link>
                 </b-card>
             </div>
         </div>
     `,
     methods: {
+        startQuiz(category_id) {
+            this.$router.push({path: `/start/${category_id}`})
+        },
         async getCategory() {
             try {
                 const response = await fetch(`http://172.28.134.31:8080/api/user`, {
@@ -50,7 +53,7 @@ var decks = {
                 })
                 const data = await response.json();
                 this.category = data.category;
-                // console.log(this.isDashboard)
+                console.log(this.category)
             } catch(error) {
                 console.log(error);
             }
