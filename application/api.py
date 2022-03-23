@@ -242,35 +242,6 @@ class CardAPI(Resource):
         db.session.commit()
         return {"msg":"Delete Successful"}, 200
 
-    # @marshal_with(card_resource_fields)
-    # def post(self):
-    #     args = create_card_parser.parse_args()
-    #     category_id = args.get('category_id', None)
-    #     front = args.get("front", None)
-    #     answer = args.get("answer", None)
-    #     option_1 = args.get("option_1", None)
-    #     option_2 = args.get("option_2", None)
-    #     option_3 = args.get("option_3", None)
-    #     option_4 = args.get("option_4", None)
-
-    #     if category_id is None or not category_id.isdigit():
-    #         raise NewUserError(status_code=400, error_code='C1001', error_message="Invalid Category Id")        
-
-    #     category = Category.query.filter(Category.category_id==int(category_id)).first()
-    #     print('a')
-    #     if category is None:
-    #         raise NotFoundError(status_code=404)
-
-    #     if front is None or answer is None or option_1 is None or option_2 is None or option_3 is None or option_4 is None or front == "" or answer == "" or option_1 == "" or option_2 == "" or option_3 == "" or option_4 == "":
-    #         raise NewUserError(status_code=400, error_code='C1002', error_message="Invalid Card Details")        
-
-    #     if int(answer) > 4 or int(answer) < 1:
-    #         raise NewUserError(status_code=400, error_code='C1004', error_message="Answer not betweeen 1 and 4")
-
-    #     card = Cards(front=front, category_id=int(category_id), answer = int(answer), option_1=option_1, option_2=option_2, option_3=option_3, option_4=option_4)
-    #     db.session.add(card)
-    #     db.session.commit()
-    #     return card
 
 
 
