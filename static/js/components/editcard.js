@@ -30,8 +30,6 @@ var edit_card = {
                     <b-form-radio v-model="answer" name="answer1" value="4">Option 4</b-form-radio>
 
                 </b-form-group>
-
-
                 <br>
                 <div class="submit-button">
                     <b-button class="submit-button" variant="outline-primary" type="submit">Submit</b-button>
