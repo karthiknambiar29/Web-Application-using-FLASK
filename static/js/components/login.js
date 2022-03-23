@@ -31,6 +31,7 @@ var login_form = {
     },
     methods: {
         checkForm: function(e) {
+            e.preventDefault();
             this.errors = [];
             if (this.username.length <= 5) {
                 this.errors.push("Username should have 6 or more characters!!");
@@ -43,7 +44,7 @@ var login_form = {
             } else {
                 alert(this.errors.join("\n"))
             }
-            e.preventDefault();
+            
         },
         async login() {
             try {

@@ -1,7 +1,6 @@
 var score = {
     data: function() {
         return {
-            // cards: {},
             cards: {},
             result: [],
             score: 0,
@@ -36,7 +35,7 @@ var score = {
                 answers = JSON.parse(answers);
                 var card_ids = localStorage.getItem("card_ids").split(",");
                 const response = await fetch(`http://172.28.134.31:8080/api/allcards`, {
-                    body: JSON.stringify({"answers": answers, "card_ids":card_ids}),
+                    body: JSON.stringify({"answers": answers, "card_ids":card_ids, "category_id": null}),
                     headers:{
                         Accept: "*/*",
                         "Content-Type": "application/json",

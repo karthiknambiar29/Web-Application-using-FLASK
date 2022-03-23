@@ -28,19 +28,57 @@ var decks = {
                         </b-card-text>
                     </div>
                     <div v-else>
-                        <b-card-text>Average Score : {{ cat['avg_score'] }}</b-card-text>
+                        <b-card-text>Average Score : {{ cat['avg_score'] }}%</b-card-text>
                         <b-card-text>Last Attempted : {{ cat['last_score'] }}</b-card-text>
                     </div>
                     <br>
-                    <b-link href="#" class="card-link" v-if="!isDashboard"><b-button class="submit-button" variant="outline-primary">Show Cards</b-button></b-link>
-                    <b-link href="#" class="card-link" v-if="isDashboard"><b-button class="submit-button" @click="startQuiz(cat['category_id'])"variant="outline-primary">Take Quiz</b-button></b-link>
+                    <b-button v-if="!isDashboard" @click="showCards(cat['category_id'])" class="submit-button" variant="outline-primary">Show Cards</b-button>
+                    <b-button v-if="!isDashboard"class="submit-button" @click="addCard(cat['category_id'])" variant="outline-primary">Add Cards</b-button>
+                    <b-button v-if="!isDashboard"class="submit-button" @click="editDeck(cat['category_id'])" variant="outline-primary">Edit Deck</b-button>
+                    <b-button v-if="!isDashboard"class="submit-button" @click="deleteDeck(cat['category_id'])" variant="outline-primary">Delete Deck</b-button>
+
+                    <b-button v-if="isDashboard" class="submit-button" @click="startQuiz(cat['category_id'])" variant="outline-primary">Take Quiz</b-button>
+
                 </b-card>
+            </div>
+            <br>
+            <div class="text-center">
+                <h3>Click here to add a new deck!</h3>
+                <b-button v-if="!isDashboard" @click="addDeck()" class="submit-button" variant="outline-primary">Add Deck</b-button>
             </div>
         </div>
     `,
     methods: {
+        showCards(category_id) {
+            this.$router.push({path: `/cards/${category_id}`})
+        },
         startQuiz(category_id) {
             this.$router.push({path: `/start/${category_id}`})
+        },
+        addCard(category_id) {
+            this.$router.push({path: `/addcard/${category_id}`})
+        },
+        addDeck() {
+            this.$router.push({path: "/adddeck"})
+        },
+        editDeck(category_id) {
+            this.$router.push({path: `/editdeck/${category_id}`})
+        },
+        async deleteDeck(category_id) {
+            try {
+                const res = await fetch(`http://172.28.134.31:8080/api/deck/${category_id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem('jwt-token')}`,
+                    }
+                })
+                if (res.status == 200) {
+                    this.$router.go()
+                }
+            } catch (error) {
+                console.log(error)
+            }
         },
         async getCategory() {
             try {

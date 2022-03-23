@@ -29,6 +29,7 @@ var category = {
                 this.description = data.description;
                 this.title = data.title;
                 console.log(data)
+
             } catch (error) {
                 console.log(error)
             }
