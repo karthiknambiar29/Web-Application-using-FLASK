@@ -43,8 +43,8 @@ var decks = {
                 </b-card>
             </div>
             <br>
-            <div class="text-center">
-                <h3>Click here to add a new deck!</h3>
+            <div v-if="!isDashboard" class="text-center">
+                <h3 v-if="!isDashboard">Click here to add a new deck!</h3>
                 <b-button v-if="!isDashboard" @click="addDeck()" class="submit-button" variant="outline-primary">Add Deck</b-button>
             </div>
             <div style="text-align: center; margin-top: 5%;" v-if="!isDashboard">

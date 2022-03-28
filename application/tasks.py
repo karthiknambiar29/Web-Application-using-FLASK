@@ -14,9 +14,9 @@ from json import dumps
 
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(crontab(day_of_month="1", hour=6, minute=33), monthly_mail.s(), name='Monthly Report')
-    sender.add_periodic_task(crontab(hour=18, minute=30), daily_mail.s(), name='Daily Reminder')
-    sender.add_periodic_task(crontab(hour=18, minute=30), daily_reminder.s(), name='Daily Google Chat Reminder')
+    sender.add_periodic_task(crontab(day_of_month="28", hour=14, minute=50), monthly_mail.s(), name='Monthly Report')
+    sender.add_periodic_task(crontab(hour=14, minute=48), daily_mail.s(), name='Daily Reminder')
+    sender.add_periodic_task(crontab(hour=14, minute=48), daily_reminder.s(), name='Daily Google Chat Reminder')
     pass
 
 @celery.task()

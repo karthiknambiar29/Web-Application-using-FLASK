@@ -97,6 +97,7 @@ class UserAPI(Resource):
         password = request.json.get("password", None)
         user.password = generate_password_hash(password)
         db.session.commit()
+        return {"msg":"Edit Successful"}, 200
 
     @jwt_required()
     def delete(self):
@@ -320,11 +321,4 @@ class DeckAPI(Resource):
         db.session.commit()
         return {"msg": "Delete Successfull"}, 200
 
-class EmailAPI(Resource):
-
-    def post(self):
-        name = request.json.get("name", None)
-        job_id = tasks.mail.delay(name)
-        print(" Job started with job_id = {}".format(job_id))
-        return "OK", 200
 

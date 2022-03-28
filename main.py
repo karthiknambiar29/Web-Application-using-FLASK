@@ -37,14 +37,13 @@ app, api, celery = create_app()
 from application.controllers import *
 
 
-from application.api import DownloadAPI, EmailAPI, RegisterAPI, ScoreAPI, UserAPI, CardAPI, DeckAPI, allCardsAPI
+from application.api import DownloadAPI, RegisterAPI, ScoreAPI, UserAPI, CardAPI, DeckAPI, allCardsAPI
 api.add_resource(UserAPI, "/api/user", "/api/user/<string:username>")
 api.add_resource(CardAPI, "/api/card","/api/card/<int:card_id>")
 api.add_resource(DeckAPI, "/api/deck", "/api/deck/<int:category_id>")
 api.add_resource(ScoreAPI, "/api/score")
 api.add_resource(allCardsAPI, "/api/allcards", "/api/allcards/<int:category_id>")
 api.add_resource(RegisterAPI, "/api/register")
-api.add_resource(EmailAPI, "/api/mail")
 api.add_resource(DownloadAPI, "/api/download")
 if __name__ == '__main__':
   app.run(host="127.0.0.1",port=8080)
