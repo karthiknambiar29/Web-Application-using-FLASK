@@ -31,7 +31,7 @@ var quiz = {
             try {
                 var card_id = localStorage.getItem("card_ids").split(",")[parseInt(this.$route.params.question)-1]
                 console.log(typeof(localStorage.getItem("card_ids")))
-                const response = await fetch(`http://172.28.134.31:8080/api/card/${card_id}`, {
+                const response = await fetch(`http://127.0.0.1:8080/api/card/${card_id}`, {
                     method : 'GET',
                     headers: {
                         "Content-Type": "application/json",
@@ -39,14 +39,18 @@ var quiz = {
                     }
                 })
                 const data = await response.json();
-                console.log(data)
-                // console.log(this.$route.params.id)
-                this.title = data.front;
-                this.options = []
-                this.options.push({text: data.option_1, value: "1"})
-                this.options.push({text: data.option_2, value: "2"})
-                this.options.push({text: data.option_3, value: "3"})
-                this.options.push({text: data.option_4, value: "4"})
+                if (response.status == 401) {
+                    alert("Session Expired!")
+                    this.$router.push({path:"/login"})
+                } else if (response.status == 200) {
+                    this.title = data.front;
+                    this.options = []
+                    this.options.push({text: data.option_1, value: "1"})
+                    this.options.push({text: data.option_2, value: "2"})
+                    this.options.push({text: data.option_3, value: "3"})
+                    this.options.push({text: data.option_4, value: "4"})
+                }
+                
                 
             } catch (error) {
                 console.log(error)

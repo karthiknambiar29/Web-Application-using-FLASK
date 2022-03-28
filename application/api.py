@@ -1,7 +1,4 @@
 from datetime import date, datetime
-from os import access
-from selectors import EpollSelector
-from unicodedata import category
 from flask_restful import Resource, Api
 from flask_restful import fields, marshal_with
 from flask_restful import reqparse
@@ -14,24 +11,46 @@ from flask import abort, request, jsonify, make_response, json
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 from random import shuffle
 from datetime import datetime
+from application import tasks
+from werkzeug.security import generate_password_hash
+
+class RegisterAPI(Resource):
+
+    def post(self):
+        username = request.json.get("name", None)
+        password = request.json.get("password", None)
+        email = request.json.get("email", None)
+        user = Users.query.filter(Users.name==username).first()
+        if user is not None:
+            return {"msg":"Username Exists!"}, 404
+        elif Users.query.filter(Users.email == email).first() is not None:
+            return {"msg": "Email id already used!!"}, 404
+        else:
+            user = Users(name=username, password=password, email=email)
+            db.session.add(user)
+            db.session.commit()
+            access_token = create_access_token(identity=user.user_id)
+            return jsonify(access_token=access_token)
 
 class UserAPI(Resource):
 
     def post(self):
         username = request.json.get('name', None) 
         password = request.json.get('password', None)
+        
         user = Users.query.filter(Users.name==username).first()
         if user is None:
-            raise NotFoundError(status_code=404)
-        # return user
-        access_token = create_access_token(identity=user.user_id)
-        return jsonify(access_token=access_token)
+            return {"msg":"Username doesnot exists"}, 404
+        if user is not None and user.verify_password(password):
+            access_token = create_access_token(identity=user.user_id)
+            return jsonify(access_token=access_token)
+        else:
+            return {"msg":"Incorrect Password"}, 404
     
     @jwt_required()
     def get(self):
         current_user = get_jwt_identity()
         user = Users.query.filter(Users.user_id == current_user).first()
-        
         user_scores = Scores.query.filter(Scores.user_id == user.user_id).all()
         scores = []
         datetimes = []
@@ -71,6 +90,24 @@ class UserAPI(Resource):
         s["categories"] = categories
         return jsonify(username=user.name, scores=s, category=category_)#, leaderboard=leaders)
 
+    @jwt_required()
+    def put(self):
+        user_id = get_jwt_identity()
+        user = Users.query.filter(Users.user_id == user_id).first()
+        password = request.json.get("password", None)
+        user.password = generate_password_hash(password)
+        db.session.commit()
+
+    @jwt_required()
+    def delete(self):
+        user_id = get_jwt_identity()
+        scores = Scores.query.filter(Scores.user_id == user_id).all()
+        for score in scores:
+            db.session.delete(score)
+        user = Users.query.filter(Users.user_id == user_id).first()
+        db.session.delete(user)
+        db.session.commit()
+        return {"msg":"Delete Successful"}, 200
    
 class ScoreAPI(Resource):
     @jwt_required()
@@ -80,9 +117,7 @@ class ScoreAPI(Resource):
         leaders = {}
         for cat in category:
             leader = db.session.query(Users.name, Scores.score, Scores.datetime).filter(db.and_(Users.user_id == Scores.user_id, Scores.category_id==cat.category_id, Category.category_id==Scores.category_id)).order_by(Scores.score.desc(), Scores.datetime.desc()).all()
-            # print(leader)
             leader = [dict(zip(keys, name)) for name in leader]
-            # print(leader)
             for l in leader:
                 l["Date"] = l["Date"].strftime("%b %d %Y %H:%M:%S")
             if len(leader) == 0:
@@ -106,28 +141,6 @@ class ScoreAPI(Resource):
         db.session.commit()
         return {"msg":"Scores stored successfully!"}
 
-update_card_parser = reqparse.RequestParser()
-update_card_parser.add_argument('category_id')
-update_card_parser.add_argument('front')
-update_card_parser.add_argument('answer')
-update_card_parser.add_argument('option_1')
-update_card_parser.add_argument('option_2')
-update_card_parser.add_argument('option_3')
-update_card_parser.add_argument('option_4')
-
-create_card_parser = reqparse.RequestParser()
-create_card_parser.add_argument('category_id')
-create_card_parser.add_argument('front')
-create_card_parser.add_argument('answer')
-create_card_parser.add_argument('option_1')
-create_card_parser.add_argument('option_2')
-create_card_parser.add_argument('option_3')
-create_card_parser.add_argument('option_4')
-
-delete_card_parser = reqparse.RequestParser()
-delete_card_parser.add_argument('card_id')
-
-
 card_resource_fields = {
     'card_id': fields.Integer,
     'category_id': fields.Integer,
@@ -138,6 +151,26 @@ card_resource_fields = {
     'option_3': fields.String,
     'option_4': fields.String,
 }
+
+class DownloadAPI(Resource):
+    @jwt_required()
+    def post(self):
+        category_id = request.json.get("category_id", None)
+        allcards=[]
+        cards = Cards.query.filter(Cards.category_id == category_id).all()
+        if len(cards) == 0:
+            return {"msg":"No cards in the deck!"}, 404
+        for i, card in enumerate(cards):
+            temp = {}
+            temp["card_id"] = card.card_id
+            temp["front"] = card.front
+            temp["option_1"] = card.option_1
+            temp["option_2"] = card.option_2
+            temp["option_3"] = card.option_3
+            temp["option_4"] = card.option_4
+            temp["correct_ans"] = card.answer
+            allcards.append(temp)
+        return jsonify(allcards=allcards)
 
 class allCardsAPI(Resource):
     @jwt_required()
@@ -160,7 +193,6 @@ class allCardsAPI(Resource):
         card_ids = request.json.get("card_ids", None)
         category_id = request.json.get("category_id", None)
         if category_id is None:
-            # print(type(answers), type(card_ids))
             allcards = {}
             for i, id in enumerate(card_ids):
                 temp = {}
@@ -214,7 +246,6 @@ class CardAPI(Resource):
         db.session.commit()
         return {"msg": "Created Successfully!"}, 200
 
-    # @marshal_with(card_resource_fields)
     @jwt_required()
     def put(self, card_id):
         card = Cards.query.filter(Cards.card_id==card_id).first()
@@ -242,25 +273,11 @@ class CardAPI(Resource):
         db.session.commit()
         return {"msg":"Delete Successful"}, 200
 
-
-
-
 deck_resource_fields = {
     'category_id': fields.Integer,
     'name': fields.String,
     'description': fields.String,
 }
-
-update_deck_parser = reqparse.RequestParser()
-update_deck_parser.add_argument('name')
-update_deck_parser.add_argument('description')
-
-create_deck_parser = reqparse.RequestParser()
-create_deck_parser.add_argument('name')
-create_deck_parser.add_argument('description')
-
-delete_deck_parser = reqparse.RequestParser()
-delete_deck_parser.add_argument('category_id')
 
 class DeckAPI(Resource):
     @jwt_required()
@@ -292,7 +309,6 @@ class DeckAPI(Resource):
 
     @jwt_required()
     def delete(self, category_id):
-        # print(category_id)
         category = Category.query.filter(Category.category_id==category_id).first()
         cards = Cards.query.filter(Cards.category_id == category_id).all()
         for card in cards:
@@ -304,5 +320,11 @@ class DeckAPI(Resource):
         db.session.commit()
         return {"msg": "Delete Successfull"}, 200
 
+class EmailAPI(Resource):
 
+    def post(self):
+        name = request.json.get("name", None)
+        job_id = tasks.mail.delay(name)
+        print(" Job started with job_id = {}".format(job_id))
+        return "OK", 200
 

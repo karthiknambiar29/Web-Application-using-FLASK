@@ -1,3 +1,4 @@
+import nav_bar from "./navbar.js";
 var cards = {
     data: function() {
         return {
@@ -6,8 +7,12 @@ var cards = {
         }
             
     },
+    components: {
+        'nav-bar': nav_bar,
+    },
     template: `
     <div>
+    <nav-bar></nav-bar>
     <h1> Cards : {{title}} </h1>
         <div v-for="card in cards">
             <b-card :header="card['front']" border-variant="primary"
@@ -30,14 +35,17 @@ var cards = {
         },
         async deleteCard(card_id) {
             try{
-                const response = await fetch(`http://172.28.134.31:8080/api/card/${parseInt(card_id)}`, {
+                const response = await fetch(`http://127.0.0.1:8080/api/card/${parseInt(card_id)}`, {
                     method: 'DELETE',
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${localStorage.getItem('jwt-token')}`,
                     }
                 })
-                if (response.status == 200) {
+                if (response.status == 401) {
+                    alert("Session Expired!")
+                    this.$router.push({path:"/login"})
+                } else if (response.status == 200) {
                     this.$router.go()
                 }
             } catch (error) {
@@ -46,7 +54,7 @@ var cards = {
         },
         async getCards() {
             try{
-                const res = await fetch(`http://172.28.134.31:8080/api/allcards/${this.$route.params.category_id}`, {
+                const res = await fetch(`http://127.0.0.1:8080/api/allcards/${this.$route.params.category_id}`, {
                     method : 'GET',
                     headers: {
                         "Content-Type": "application/json",
@@ -55,10 +63,12 @@ var cards = {
                 })
                 const result = await res.json();
                 this.title = result.title;
-                console.log(res.status)
-                if (res.status == 200) {
+                if (res.status == 401) {
+                    alert("Session Expired!")
+                    this.$router.push({path:"/login"})
+                } else if (res.status == 200) {
                     try{
-                        const response = await fetch(`http://172.28.134.31:8080/api/allcards`, {
+                        const res_ = await fetch(`http://127.0.0.1:8080/api/allcards`, {
                             body: JSON.stringify({"answers": null, "card_ids":null, "category_id":this.$route.params.category_id}),
                             headers:{
                                 Accept: "*/*",
@@ -68,21 +78,27 @@ var cards = {
                             method: "POST",
                         })
         
-                        const data = await response.json();
-                        if (Object.keys(data).length == 0) {
-                            alert("No cards in the deck!")
-                            this.$router.push({path:"/decks"})
+                        const data = await res_.json();
+                        if (res_.status == 401) {
+                            alert("Session Expired!")
+                            this.$router.push({path:"/login"})
+                        } else if (res_.status == 200) {
+                            if (Object.keys(data).length == 0) {
+                                alert("No cards in the deck!")
+                                this.$router.push({path:"/decks"})
+                            }
+                            for (let [key, value] of Object.entries(data)) {
+                                let options = []
+                                options.push({"1":"1. " + value.option_1})
+                                options.push({"1":"2. " + value.option_2})
+                                options.push({"1":"3. " + value.option_3})
+                                options.push({"1":"4. " + value.option_4})
+                                options[value.correct_ans-1]["_rowVariant"] = "success"
+                                value.options = options
+                            }
+                            this.cards = data
                         }
-                        for (let [key, value] of Object.entries(data)) {
-                            let options = []
-                            options.push({"1":"1. " + value.option_1})
-                            options.push({"1":"2. " + value.option_2})
-                            options.push({"1":"3. " + value.option_3})
-                            options.push({"1":"4. " + value.option_4})
-                            options[value.correct_ans-1]["_rowVariant"] = "success"
-                            value.options = options
-                        }
-                        this.cards = data
+                        
                     } catch (error){
                         console.log(error)
                     }

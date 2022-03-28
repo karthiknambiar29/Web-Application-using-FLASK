@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <p>Dear {{ data['username']}},</p>
+    <p>Here is your progress till last month!</p>
+    <table style="text-align: center;">
+        <thead style="background-color: darkgrey;">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">Average Score</th>
+            <th scope="col">Last Attempted</th>
+          </tr>
+        </thead>
+        {% for cat in data['category'] %}
+        <tbody>
+          <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{cat['name']}}</td>
+            <td>{{cat['avg_score']}} %</td>
+            <td>{{cat['last_score']}}</td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+  </body>
+</html>

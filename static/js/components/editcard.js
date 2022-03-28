@@ -1,6 +1,8 @@
+import nav_bar from "./navbar.js";
 var edit_card = {
     template: `
         <div class="container">
+        <nav-bar></nav-bar>
             <b-form @submit="submit">
                 <h1 class="h3 mb-3 font-weight-normal" style="text-align: center;">Enter Card Details</h1>
                 <b-form-group label="Question">
@@ -35,6 +37,10 @@ var edit_card = {
                     <b-button class="submit-button" variant="outline-primary" type="submit">Submit</b-button>
                 </div>            
             </b-form>
+            <div style="text-align: center; margin-top: 5%;">
+                <h6>Click here to go to Dashboard</h6>
+                <b-link to="/dashboard"><b-button class="submit-button" variant="outline-primary">Dashboard</b-button></b-link> 
+            </div>
         </div>
         `,
     data: function() {
@@ -48,6 +54,9 @@ var edit_card = {
             category_id: "",
         }
     },
+    components: {
+        'nav-bar': nav_bar,
+    },
     methods: {
         submit: function(e) {
             e.preventDefault();
@@ -55,14 +64,17 @@ var edit_card = {
         },
         async getCard() {
             try{
-                const response = await fetch(`http://172.28.134.31:8080/api/card/${this.$route.params.card_id}`, {
+                const response = await fetch(`http://127.0.0.1:8080/api/card/${this.$route.params.card_id}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem('jwt-token')}`,
                 },
                 method: "GET",
                 })
-                if (response.status == 200) {
+                if (response.status == 401) {
+                    alert("Session Expired!")
+                    this.$router.push({path:"/login"})
+                } else if (response.status == 200) {
                     const data = await response.json();
                     this.front = data.front;
                     this.answer = data.answer;
@@ -78,7 +90,7 @@ var edit_card = {
         },
         async edit_card() {
             try {
-                const response = await fetch(`http://172.28.134.31:8080/api/card/${this.$route.params.card_id}`, {
+                const response = await fetch(`http://127.0.0.1:8080/api/card/${this.$route.params.card_id}`, {
                     body: JSON.stringify({"front":this.front, "answer":this.answer, 
                         "option_1":this.option_1, "option_2":this.option_2, 
                         "option_3":this.option_3, "option_4":this.option_4}),
@@ -89,7 +101,10 @@ var edit_card = {
                     },
                     method: "PUT",
                 })
-                if (response.status == 200) {
+                if (response.status == 401) {
+                    alert("Session Expired!")
+                    this.$router.push({path:"/login"})
+                } else if (response.status == 200) {
                     this.$router.push({path : `/cards/${this.category_id}`})
                 }
             } catch(error) {

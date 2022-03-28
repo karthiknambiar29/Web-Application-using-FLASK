@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <p>Dear {{ data['username']}},</p>
+    <p>We are here to remind you to complete your daily dose of Flashcards!</p>
+    <p>Here is the list of available decks:</p>
+    <ul>
+        {% for cat in data['categories'] %}
+            <li>{{ cat }}</li>
+        {% endfor %}
+    </ul>
+
+    
+  </body>
+</html>

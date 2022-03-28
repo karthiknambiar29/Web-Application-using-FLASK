@@ -13,6 +13,8 @@ import add_deck from "./components/adddeck.js";
 import edit_deck from "./components/editdeck.js";
 import add_card from "./components/addcard.js";
 import edit_card from "./components/editcard.js";
+import edit_password from "./components/editpassword.js";
+import NotFound from "./components/NotFound.js";
 
 const routes = [
     {
@@ -57,13 +59,18 @@ const routes = [
     }, {
         path: "/editcard/:card_id",
         component: edit_card
+    },{
+        path: "/editpassword",
+        component: edit_password
+    }, {
+        path :'*',
+        component:NotFound
     }
 ]
 
 
 const router = new VueRouter({
     routes: routes,
-    // mode: 'history'
 })
 
 
@@ -72,6 +79,5 @@ const router = new VueRouter({
 var app = new Vue({
     el: '#app',
     router: router
-    // router:router,
 })
 

@@ -48,7 +48,7 @@ var login_form = {
         },
         async login() {
             try {
-                const response = await fetch(`http://172.28.134.31:8080/api/user`, {
+                const response = await fetch(`http://127.0.0.1:8080/api/user`, {
                     body: JSON.stringify({"name":this.username, "password":this.password}),
                     headers: {
                       Accept: "*/*",
@@ -57,8 +57,8 @@ var login_form = {
                     method: "POST",
                     })
                 if (response.status == 404) {
-                    // this.error_username_password = true;
-                    alert("Username or Password not correct!!")
+                    const data = await response.json();
+                    alert(data.msg)
                     this.username = "";
                     this.password = "";
                 } else if (response.status == 200) {

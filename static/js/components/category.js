@@ -1,3 +1,4 @@
+import nav_bar from "./navbar.js";
 var category = {
     data: function() {
         return {
@@ -5,8 +6,13 @@ var category = {
             description: ""
         }
     },
+    components: {
+        'nav-bar': nav_bar,
+    },
     template: `
         <div>
+        <nav-bar></nav-bar>
+
             <h1>FlashCards</h1>
             <h1>{{ title }}</h1>
             <h2>{{ description }}</h2>
@@ -16,7 +22,7 @@ var category = {
     methods: {
         async getallCard() {
             try {
-                const response = await fetch(`http://172.28.134.31:8080/api/allcards/${this.$route.params.category_id}`, {
+                const response = await fetch(`http://127.0.0.1:8080/api/allcards/${this.$route.params.category_id}`, {
                     method : 'GET',
                     headers: {
                         "Content-Type": "application/json",
@@ -24,12 +30,16 @@ var category = {
                     }
                 })
                 const data = await response.json();
-                this.data = data
-                localStorage.setItem("card_ids", data.card_ids)
-                this.description = data.description;
-                this.title = data.title;
-                console.log(data)
-
+                if (response.status == 401) {
+                    alert("Session Expired!")
+                    this.$router.push({path:"/login"})
+                } else if (response.status == 200) {
+                    this.data = data
+                    localStorage.setItem("card_ids", data.card_ids)
+                    this.description = data.description;
+                    this.title = data.title;
+                    console.log(data)
+                }
             } catch (error) {
                 console.log(error)
             }

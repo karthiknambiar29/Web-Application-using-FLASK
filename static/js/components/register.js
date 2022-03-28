@@ -7,6 +7,9 @@ var register_form = {
                     <b-form-input type="text" id="username" v-model="username" placeholder="Enter Username" required /> 
                 </b-form-group>
                 <b-form-group>
+                    <b-form-input type="email" id="email" v-model="email" placeholder="Enter E-mail" required /> 
+                </b-form-group>
+                <b-form-group>
                     <b-form-input type="password" id="password" v-model="password" placeholder="Enter Password" required />  
                 </b-form-group>
                 <b-form-group>
@@ -28,10 +31,15 @@ var register_form = {
           username: "",
           password: "",
           confirm_password: "",
+          email: "",
           errors: [],
         }
     },
     methods: {
+        validEmail: function (email) {
+            var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        },
         checkForm: function(e) {
             this.errors = [];
             if (this.username.length <= 5) {
@@ -44,6 +52,9 @@ var register_form = {
             if (this.password != this.confirm_password) {
                 this.errors.push("Passwords donot match!!")
             }
+            if (!this.validEmail(this.email)) {
+                this.errors.push('Valid email required.');
+            }
             if (!this.errors.length) {
                 return this.register();
             } else {
@@ -51,29 +62,32 @@ var register_form = {
             }
             e.preventDefault();
         },
-        register: function() {
-            fetch(`http://172.28.134.31:8080/api/user`, {
-                body: JSON.stringify({"name":this.username, "password":this.password}),
-                headers: {
-                  Accept: "*/*",
-                  "Content-Type": "application/json"
-                },
-                method: "POST",
-				})
-				.then(response => response.json())
-				.then(data => {
-					console.log('Success:', data);
+        async register() {
+            try{
+                const response = await fetch(`http://127.0.0.1:8080/api/register`, {
+                    body: JSON.stringify({"name":this.username, "password":this.password, "email": this.email}),
+                    headers: {
+                      Accept: "*/*",
+                      "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                })
+                if (response.status == 200) {
+                    const data = await response.json();
                     localStorage.setItem("jwt-token", data.access_token)
-				})
-				.catch((error) => {
-					console.log('Error:', error);
-				});
-            // console.log(JSON.stringify({name: this.username, password: this.password}))
-            this.username = "";
-            this.password = "";
-            this.confirm_password = "";
+                    this.$router.push({path:"/dashboard"})
+                } else if (response.status == 404) {
+                    const data = await response.json();
+                    alert(data.msg)
+                    this.username = ""
+                    this.password = ""
+                    this.confirm_password = ""
+                    this.email = ""
 
-
+                }
+            } catch (error) {
+                console.log(error)
+            }
         },
     },
 }

@@ -1,3 +1,4 @@
+import nav_bar from "./navbar.js";
 var score = {
     data: function() {
         return {
@@ -9,6 +10,7 @@ var score = {
     },
     template: `
     <div>
+    <nav-bar></nav-bar>
     <h1> Score </h1>
     <h3 style="text-align: center"> Your Score: {{ score }}% </h3>
     <canvas class="my-4 chartjs-render-monitor" width="100" id="myChart"></canvas>
@@ -26,15 +28,22 @@ var score = {
             </b-card>
             <br>
         </div>
+        <div style="text-align: center; margin-top: 5%;">
+            <h6>Click here to go to Dashboard</h6>
+            <b-link to="/dashboard"><b-button class="submit-button" variant="outline-primary">Dashboard</b-button></b-link> 
+        </div>
     </div>
     `,
+    components: {
+        'nav-bar': nav_bar,
+    },
     methods: {
         async getScore() {
             try{
                 var answers = localStorage.getItem("answers");
                 answers = JSON.parse(answers);
                 var card_ids = localStorage.getItem("card_ids").split(",");
-                const response = await fetch(`http://172.28.134.31:8080/api/allcards`, {
+                const response = await fetch(`http://127.0.0.1:8080/api/allcards`, {
                     body: JSON.stringify({"answers": answers, "card_ids":card_ids, "category_id": null}),
                     headers:{
                         Accept: "*/*",
@@ -45,8 +54,11 @@ var score = {
                 })
 
                 const data = await response.json();
-                // console.log(data)
-                let correct = 0;
+                if (response.status == 401) {
+                    alert("Session Expired!")
+                    this.$router.push({path:"/login"})
+                } else if (response.status == 200) {
+                    let correct = 0;
                 let wrong = 0;
                 let skipped = 0;  
                 for (let [key, value] of Object.entries(data)) {
@@ -97,7 +109,10 @@ var score = {
                         maintainAspectRatio: true, 
                     }
                 });
-                const res = await fetch(`http://172.28.134.31:8080/api/score`, {
+                }
+                // console.log(data)
+                
+                const res = await fetch(`http://127.0.0.1:8080/api/score`, {
                     body: JSON.stringify({"score": this.score, "category_id":parseInt(this.$route.params.category_id)}),
                     headers:{
                         Accept: "*/*",
@@ -106,6 +121,10 @@ var score = {
                     },
                     method: "POST",
                 });
+                if (res.status == 401) {
+                    alert("Session Expired!")
+                    this.$router.push({path:"/login"})
+                }
             } catch (error){
                 console.log(error)
             }

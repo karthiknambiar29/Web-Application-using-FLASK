@@ -1,4 +1,5 @@
 from application.database import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Cards(db.Model):
     __tablename__ = 'cards'
@@ -16,11 +17,15 @@ class Users(db.Model):
     user_id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
     name = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False, unique=True)
 
-    def __init__(self, user_id, name, password):
-        self.user_id = user_id
+    def __init__(self, name, password, email):
         self.name = name
-        self.password = password
+        self.password = generate_password_hash(password)
+        self.email = email
+    
+    def verify_password(self, pwd):
+        return check_password_hash(self.password, pwd)
 
 class Scores(db.Model):
     __tablename__ = 'scores'
